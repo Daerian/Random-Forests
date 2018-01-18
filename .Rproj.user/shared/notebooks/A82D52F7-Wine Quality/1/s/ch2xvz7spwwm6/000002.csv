@@ -1,10 +1,14 @@
+"0","# remove NA values"
+"0","redWineData = (redWineData[complete.cases(redWineData),])"
+"0","whiteWineData = (redWineData[complete.cases(whiteWineData),])"
 "0","# Prep Sets for merging"
 "0","redWineData = redWineData %>% mutate(Type = ""Red"")"
 "0","whiteWineData = whiteWineData %>% mutate (Type = ""White"")"
 "0","# Merge Data and get Final Dataset"
 "0","wineData = rbind(redWineData,whiteWineData)"
+"0","# Glimpse of the Data Set"
 "0","glimpse(wineData)"
-"1","Observations: 6,497
+"1","Observations: 6,495
 "
 "1","Variables: 13
 "
@@ -20,7 +24,7 @@
 "
 "1","$ `free sulfur dioxide`  <dbl> 11, 25, 15, 17, 11, 13, 15, 15, 9, 17, 15, 17, 16, 9, 52,...
 "
-"1","$ `total sulfur dioxide` <dbl> 34, 67, 54, 60, 34, 40, 59, 21, 18, 102, 65, 102, 59, 29,...
+"1","$ `total sulfur dioxide` <int> 34, 67, 54, 60, 34, 40, 59, 21, 18, 102, 65, 102, 59, 29,...
 "
 "1","$ density                <dbl> 0.9978, 0.9968, 0.9970, 0.9980, 0.9978, 0.9978, 0.9964, 0...
 "

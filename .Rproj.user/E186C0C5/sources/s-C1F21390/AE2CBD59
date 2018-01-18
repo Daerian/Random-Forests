@@ -7,12 +7,12 @@
     "folds" : "",
     "hash" : "0",
     "id" : "AE2CBD59",
-    "lastKnownWriteTime" : 1516314885,
-    "last_content_update" : 1516314885126,
+    "lastKnownWriteTime" : 1516316326,
+    "last_content_update" : 1516316326456,
     "path" : "~/Documents/UTSC/Courses/STA/D Levels/STAD94/Random-Forests/Wine Quality.Rmd",
     "project_path" : "Wine Quality.Rmd",
     "properties" : {
-        "cursorPosition" : "68,25",
+        "cursorPosition" : "65,50",
         "last_setup_crc32" : "C1F21390bb338d19",
         "scrollLine" : "59",
         "tempName" : "Untitled1"

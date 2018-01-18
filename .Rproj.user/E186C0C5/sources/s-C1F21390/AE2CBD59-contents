@@ -59,6 +59,9 @@ whiteWineData = read_delim("winequality-white.csv", delim = ";")
 ```
 
 ```{r}
+# remove NA values
+redWineData = (redWineData[complete.cases(redWineData),])
+whiteWineData = (redWineData[complete.cases(whiteWineData),])
 # Prep Sets for merging
 redWineData = redWineData %>% mutate(Type = "Red")
 whiteWineData = whiteWineData %>% mutate (Type = "White")
