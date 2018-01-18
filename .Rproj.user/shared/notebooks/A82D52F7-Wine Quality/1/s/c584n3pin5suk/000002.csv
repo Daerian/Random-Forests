@@ -1,0 +1,38 @@
+"0","# Import raw data sets"
+"0","redWineData = read_delim(""winequality-red.csv"", delim = "";"")"
+"2","Parsed with column specification:
+cols(
+  `fixed acidity` = col_double(),
+  `volatile acidity` = col_double(),
+  `citric acid` = col_double(),
+  `residual sugar` = col_double(),
+  chlorides = col_double(),
+  `free sulfur dioxide` = col_double(),
+  `total sulfur dioxide` = col_integer(),
+  density = col_double(),
+  pH = col_double(),
+  sulphates = col_double(),
+  alcohol = col_double(),
+  quality = col_integer()
+)
+"
+"2","2 parsing failures.
+row # A tibble: 2 x 5 col     row                  col               expected actual                  file expected   <int>                <chr>                  <chr>  <chr>                 <chr> actual 1  1296 total sulfur dioxide no trailing characters     .5 'winequality-red.csv' file 2  1297 total sulfur dioxide no trailing characters     .5 'winequality-red.csv'
+"
+"0","whiteWineData = read_delim(""winequality-white.csv"", delim = "";"")"
+"2","Parsed with column specification:
+cols(
+  `fixed acidity` = col_double(),
+  `volatile acidity` = col_double(),
+  `citric acid` = col_double(),
+  `residual sugar` = col_double(),
+  chlorides = col_double(),
+  `free sulfur dioxide` = col_double(),
+  `total sulfur dioxide` = col_double(),
+  density = col_double(),
+  pH = col_double(),
+  sulphates = col_double(),
+  alcohol = col_double(),
+  quality = col_integer()
+)
+"
