@@ -1,0 +1,198 @@
+---
+title: "STAC32 Assignment 7"
+author: "Daerian Dilkumar"
+date: '2017-11-07'
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+\center{
+UTorID:            dilkumar,
+}
+\center{
+Student Number:    1000356198
+}
+\center{
+  \textbf{NOTE: There is cleared page between Question 8 and 9 due to a change to report format}
+}
+\clearpage
+\tableofcontents
+\clearpage
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# QUESTION 8 - Regular Format
+## Library imports
+```{r}
+library(tidyverse)
+library(smmr)
+```
+
+## PART A
+First read the data and store it
+```{r}
+myurl = "http://www.utsc.utoronto.ca/~butler/c32/movie-lengths.csv"
+movies = read_delim(myurl,",")
+```
+
+```{r}
+movies %>% group_by(rating) %>% summarize(Median = median(length), Number_of_Movies = length(length))
+```
+
+
+## PART B
+```{r}
+ggplot(movies, aes(y=length, x=rating)) + geom_boxplot()
+```
+
+The boxplot helps us to assess normality and view stanard deviation. Upon close analysis we see that the data is not only catagorical but also some ratings have boxplots which are non- normal. The small distance between Q3 and Q1 along with a low median and the existance of outliers greatly affects and skews the mean, and since ANOVA relies on t-tests we find that this dataset will not be accurately assessed via ANOVA. In addition we can see that some of the ratings have non-symetric whisker distribution above and below. This implies that the data it self is skewed for these ratings and therefore it goes against normality, once again affecting the ANOVA since hte assumptions that the error standard deviation remains constant is blown off.
+Therefore overall, ANOVA is not a good type of analysis for this dataset.
+
+## PART C
+```{r}
+median_test(movies,length,rating)
+```
+
+We here see that the p=value is very small. This means that the median being above or below the overall median depends on group. Therefore not all ratings have the same median movie length, and the median length being above or below the overall median length depends on the rating, as each group of rating has a different median value with some being above and some being below the overall median movie length.
+
+
+## PART D
+
+### CODE
+filename fileurl2 url "http://www.utsc.utoronto.ca/~butler/c32/movie-lengths.csv";
+proc import
+	datafile=fileurl2
+	dbms=csv
+	out=movie_length
+	replace;
+	delimiter=',';
+	getnames=yes;
+
+
+proc npar1way median;
+var length;
+class rating;
+
+
+### OUTPUT
+Median Scores (Number of Points Above Median) for Variable length
+Classified by Variable rating
+rating	N	Sum of
+Scores	Expected
+Under H0	Std Dev
+Under H0	Mean
+Score
+G	15	2.00	7.50	1.662778	0.133333
+PG-13	15	12.00	7.50	1.662778	0.800000
+PG	15	7.50	7.50	1.662778	0.500000
+R	15	8.50	7.50	1.662778	0.566667
+Average scores were used for ties.
+
+
+Median One-Way Analysis
+Chi-Square	13.9701
+DF	3
+Pr > Chi-Square	0.0029
+
+
+### Analysis
+Then, we see that SAS has the same outputs as R and confirms out reasoning as above.
+
+
+Please go below for Question 9. I have segmented it off due to a change in style.
+Question 9 is written as a report.
+
+\clearpage
+
+# QUESTION 9 - Report Format
+
+## Part A - Introduction
+We know that the meassure of atomic weight of the element "carbon"" is 12. There are two meathods of measuring atomic weight that were used to take measurements on a set of samples of carbon. We will label these methods 1 and 2 respectively, then perform an analysis on them in order to find if there are any statistically significant differences in their results.
+
+
+## Part B - Library imports and set-up
+
+We will begin by importing into our work space the libraries /required to perform our analysis.
+We begin with tidyversre and smmr in order to gain access to certain function we use later.
+
+```{r}
+library(tidyverse)
+library(smmr)
+```
+
+Now we proceed to read in the data from our data set so that we can work with it!
+We will store our data in a variable named chem
+```{r}
+data_file = "http://www.utsc.utoronto.ca/~butler/c32/carbon.txt"
+chem = read_delim(data_file," ")
+```
+
+We can now ensure that our data was read correctly so ensure that our analysis goes correctly and without error. Here, we see that the data for the methods was read as integers, however they are categorical variables and shouldn't be treated as quantative. So we must also attempt to fix this discrepancy.
+
+```{r}
+chem$method = as.factor(chem$method)
+glimpse(chem)
+summary(chem)
+```
+
+
+## Comparison of Measurements
+
+### Part C - Performance and Creation of Comparative Plots
+
+To begin our analysis procdure we will first compare the measurements we have made. A good way to compare these is via the use of boxplots - as they will also show us the normality of the methods in order to point us towards the correct form of analysis. Remember that in part B above we already established that the methods are identifiers and not numerical observations, therefore we do not need to re-establish this for our plots.
+
+```{r}
+ggplot(chem,aes(x=method,y=weight))+geom_boxplot()
+```
+
+
+### Part D - Comments on Comparisons of Measurements
+
+From the boxplot we can see that both methods show that their mean weight from all their observations is just between 12.005 and 12.01. There seems to be large discrepancy however when it comes to the ranges which the values take. We promptly notice that meathod 1 has an outlier observation at around 11.985. In addition for meathod 1, we see that the observations below the median have a large spread of values and a shorter range above. This implies that the observed data is quite left skewed for method 1. In contrast however for method 2, there exist no outliers, with a huge spread of values above and almost nothing below implying a large right skew.
+
+
+## Tests and Analysis
+
+
+### Part E - Welch Two Sample t-test
+
+We will now use a t-test in order to compare means and check for variance between them.
+We can use the welch two-sample t-test in order to accurately compare the two methods and perform an analysis. We use the Null Hypothesis that there is no difference, versus the alternative that there is a difference. 
+
+
+First we filter each method into it's own set
+```{r}
+meth1 = chem %>% filter(method=="1")
+meth2 = chem %>% filter(method=="2")
+```
+
+Now we can perform a welch two-sample t-test
+
+```{r}
+t.test(meth1$weight,meth2$weight)
+```
+
+The welch Two Sample t-test checks if the mean values of the two samples are equivilent.
+However, we can see that the p-value is 0.1238, which is much larger than 0.05, which means we cannot reject our Null Hypothesis that the means of the two samples will be zero.
+However it is important to notice that the data are very skewed leading to there being large doubts about the validity of the t-test.
+
+
+
+### Part F - Mood's Median Test - an alternative to the Welch T-test.
+
+In the above test we would arrive at the conclusion that the two methods will provide on average weights where their averages would differ not from one another. However we must remember the large skew in data and the outliers pulling the means in other directions. Therefore it is more appropriate to compare averages not by means, but rather by median. So, we will instead make use of the smmr package we called earlier in our library imports to perform a median test on the two samples. This time our Null Hypothesis is that one sample will provide a greater median value than the other, and the alternative is that the average values are equivalent
+
+```{r}
+median_test(chem,weight,method)
+```
+
+The Mood's Median Test shows us that the p-value is 0.0942. However it is important to note that this value is for the two-sided median test. Therefore we must divide the p-value by 2 to get the p-value we are looking for. This provides a p-value of 0.04721. Then we reject this null hypothesis in favour of the alternative hypothesis, and take that the average values willb e roughly equivalent.
+
+
+## Part G - Conclusion
+
+The two tests we have conducted and the comparisons we have made above have lead to a remarkable conclusion. Each test's results are explained above and seem to point towards the methods providing equivilent average weights. The combination of our t-test result (fail to reject that the averages are the same) and our median test result (rejecting that either average is larger than the other) then points us towards taking that the average weights are indeed equivilent. Therefore both methods will on average provide the same value, and neither is statistically better than the other. 
