@@ -1,0 +1,74 @@
+---
+title: "Tipping Factors"
+author: "Daerian Dilkumar, Guan Yu Chen, Derek Frempong, Zongqi Li"
+date: '2017-11-12'
+header-includes:
+   - \usepackage{bbm}
+output:
+  pdf_document: 
+    number_sections: yes
+---
+\center{
+  \textbf{UTorIDs, Student Numbers:}
+}
+\center{
+dilkumar, 1000356198
+}
+\center{
+chengu17, 1001591967
+}
+\center{
+lizong4,  1000481196
+}
+\center{
+frempon2, 1000566675
+}
+\clearpage
+\tableofcontents
+\clearpage
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Abstract
+
+TODO: FILL
+
+
+# Introduction
+
+TODO: FILL
+
+
+# Set-Up and Imports
+
+```{r}
+library(tidyverse)
+```
+
+
+We will begin by importing our data sets and then prepping them to be worked with
+
+```{r}
+# Import raw data sets
+redWineData = read_delim("winequality-red.csv", delim = ";")
+whiteWineData = read_delim("winequality-white.csv", delim = ";")
+```
+
+```{r}
+# Prep Sets for merging
+redWineData = redWineData %>% mutate(Type = "Red")
+whiteWineData = whiteWineData %>% mutate (Type = "White")
+
+# Merge Data and get Final Dataset
+wineData = rbind(redWineData,whiteWineData)
+
+# Glimpse of the Data Set
+glimpse(wineData)
+```
+
+# Data Analysis
+
