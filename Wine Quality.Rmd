@@ -1,5 +1,5 @@
 ---
-title: "Tipping Factors"
+title: "Wine Quality"
 author: "Daerian Dilkumar, Guan Yu Chen, Derek Frempong, Zongqi Li"
 date: '2017-11-12'
 header-includes:
