@@ -45,7 +45,7 @@ TODO: FILL
 
 # Set-Up and Imports
 
-```{r}
+```{r, echo=FALSE, message=FALSE}
 library(tidyverse)
 ```
 
@@ -62,7 +62,7 @@ whiteWineData = read_delim("winequality-white.csv", delim = ";")
 # remove NA values
 redWineData = (redWineData[complete.cases(redWineData),])
 whiteWineData = (whiteWineData[complete.cases(whiteWineData),])
-# Prep Sets for merging
+# Prep Sets for merginglibrary
 redWineData = redWineData %>% mutate(Type = "Red")
 whiteWineData = whiteWineData %>% mutate (Type = "White")
 
