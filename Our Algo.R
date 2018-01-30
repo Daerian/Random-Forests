@@ -5,21 +5,44 @@ m - Number of predictors to use for constructing trees
 B - Number of trees chosen for each bootstrap sample
 "
 
+
+################################# LIBRARIES AND MISCELLANEOUS ######################################
+rm(list = ls())
+
+require(tidyverse)
+require(rpart)
+require(rpart.plot)
+
 library(tidyverse)
-library(rattle)
+library(rpart)
 library(rpart.plot)
-library(RColorBrewer)
 
-RandForest <- function (Z, labels, m, B) {
-  bootstrap <- BSSample(sample(Z, m, replace=FALSE))
-}
 
-BSSample <- function(Z) {
-  bssamp <- sample_n(Z, nrow(Z), replace=TRUE)
-  return(bssamp)
-}
+################################### READ AND CLEAN DATA ############################################
 
-CompPredictErr <- function() {
-  # TODO: Loss function
-}
+redWineData = read_delim("winequality-red.csv", delim = ";")
+whiteWineData = read_delim("winequality-white.csv", delim = ";")
 
+# remove NA values
+redWineData = (redWineData[complete.cases(redWineData),])
+whiteWineData = (whiteWineData[complete.cases(whiteWineData),])
+# Prep Sets for merginglibrary
+redWineData = redWineData %>% mutate(Type = "Red")
+whiteWineData = whiteWineData %>% mutate (Type = "White")
+
+# Merge Data and get Final Dataset
+wineData = rbind(redWineData,whiteWineData)
+# Remove spaces from column names
+names(wineData) = gsub(" ","_", names(wineData))
+
+
+
+##################################### BUILD A TREE ##############################################
+
+sample.wineData = sample_n(wineData, 1000, replace=TRUE)
+sample.p.wineData = sample(sample.wineData[,c(-12,-13)], 4, replace=FALSE)
+param = paste(names(sample.p.wineData)[5],"~", paste(names(sample.p.wineData)[-1], collapse=" + "))
+sample.p.wineData$quality = sample.wineData$quality
+column.names = colnames(sample.p.wineData)
+trees=rpart(formula=param, data=sample.p.wineData, method='class')
+rpart.plot(trees)
