@@ -5,9 +5,13 @@ m - Number of predictors to use for constructing trees
 B - Number of trees chosen for each bootstrap sample
 "
 
+
+################################# LIBRARIES AND MISCELLANEOUS ######################################
+rm(list = ls())
 library(tidyverse)
 library(rpart)
-
+library(rpart.plot)
+################################### SETUP ###########################################################
 redWineData = read_delim("winequality-red.csv", delim = ";")
 whiteWineData = read_delim("winequality-white.csv", delim = ";")
 
@@ -25,13 +29,14 @@ wineData = rbind(redWineData,whiteWineData)
 glimpse(wineData)
 
 names(wineData) = gsub(" ","_", names(wineData))
+#######################################################################################################
 
+########################## BUILDING THE TREE ##########################################################
 sample.wineData = sample_n(wineData, 1000, replace=TRUE)
 sample.p.wineData = sample(sample.wineData[,c(-12,-13)], 4, replace=FALSE)
 sample.p.wineData$quality = sample.wineData$quality
 column.names = colnames(sample.p.wineData)
 param = paste(names(sample.p.wineData)[5],"~", paste(names(sample.p.wineData)[-1], collapse=" + "))
 trees=rpart(formula=param, data=sample.p.wineData, method='class')
-plot(trees)
-text(trees, use.n=TRUE)
-
+rpart.plot(trees)
+#######################################################################################################
