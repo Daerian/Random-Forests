@@ -5,26 +5,21 @@ m - Number of predictors to use for constructing trees
 B - Number of trees chosen for each bootstrap sample
 "
 
-library(tidyverse)
-<<<<<<< HEAD
-library(rattle)
-library(rpart.plot)
-library(RColorBrewer)
 
-RandForest <- function (Z, labels, m, B) {
-  bootstrap <- BSSample(sample(Z, m, replace=FALSE))
-}
+################################# LIBRARIES AND MISCELLANEOUS ######################################
+rm(list = ls())
 
-BSSample <- function(Z) {
-  bssamp <- sample_n(Z, nrow(Z), replace=TRUE)
-  return(bssamp)
-}
+require(tidyverse)
+require(rpart)
+require(rpart.plot)
 
-CompPredictErr <- function() {
-  # TODO: Loss function
-}
 =======
+
+library(tidyverse)
 library(rpart)
+library(rpart.plot)
+
+=======
 
 redWineData = read_delim("winequality-red.csv", delim = ";")
 whiteWineData = read_delim("winequality-white.csv", delim = ";")
@@ -52,6 +47,4 @@ param = paste(names(sample.p.wineData)[5],"~", paste(names(sample.p.wineData)[-1
 trees=rpart(formula=param, data=sample.p.wineData, method='class')
 plot(trees)
 text(trees, use.n=TRUE)
->>>>>>> kevin
 
->>>>>>> kevin
