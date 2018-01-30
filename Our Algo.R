@@ -54,3 +54,4 @@ plot(trees)
 text(trees, use.n=TRUE)
 >>>>>>> kevin
 
+>>>>>>> kevin
