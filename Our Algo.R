@@ -41,7 +41,7 @@ names(wineData) = gsub(" ","_", names(wineData))
 
 sample.wineData = sample_n(wineData, 1000, replace=TRUE)
 sample.p.wineData = sample(sample.wineData[,c(-12,-13)], 4, replace=FALSE)
-param = paste(names(sample.p.wineData)[5],"~", paste(names(sample.p.wineData)[-1], collapse=" + "))
+param = paste("quality ~", paste(names(sample.p.wineData)[-1], collapse=" + "))
 sample.p.wineData$quality = sample.wineData$quality
 column.names = colnames(sample.p.wineData)
 trees=rpart(formula=param, data=sample.p.wineData, method='class')
