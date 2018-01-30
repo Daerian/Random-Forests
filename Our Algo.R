@@ -39,10 +39,29 @@ names(wineData) = gsub(" ","_", names(wineData))
 
 ##################################### BUILD A TREE ##############################################
 
-sample.wineData = sample_n(wineData, 1000, replace=TRUE)
-sample.p.wineData = sample(sample.wineData[,c(-12,-13)], 4, replace=FALSE)
-param = paste(names(sample.p.wineData)[5],"~", paste(names(sample.p.wineData)[-1], collapse=" + "))
-sample.p.wineData$quality = sample.wineData$quality
-column.names = colnames(sample.p.wineData)
-trees=rpart(formula=param, data=sample.p.wineData, method='class')
-rpart.plot(trees)
+bt = function() {
+  sample.wineData = sample_n(wineData, 1000, replace=TRUE)
+  sample.p.wineData = sample(sample.wineData[,c(-12,-13)], 4, replace=FALSE)
+  param = paste("quality ~", paste(names(sample.p.wineData), collapse=" + "))
+  sample.p.wineData$quality = sample.wineData$quality
+  column.names = colnames(sample.p.wineData)
+  trees=rpart(formula=param, data=sample.p.wineData, method='class')
+  #rpart.plot(trees)
+  return(trees)
+}
+
+
+# Forest Algo
+forest = function(num_trees){
+  forest=list()
+  for (i in 1:num_trees){
+    forest[[i]] = bt()
+  }
+  return (forest)
+}
+
+# 
+trees2 = forest(3)
+rpart.plot(trees2[[2]])
+
+
