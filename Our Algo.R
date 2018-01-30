@@ -5,8 +5,21 @@ m - Number of predictors to use for constructing trees
 B - Number of trees chosen for each bootstrap sample
 "
 
+
+################################# LIBRARIES AND MISCELLANEOUS ######################################
+rm(list = ls())
+
+require(tidyverse)
+require(rpart)
+require(rpart.plot)
+
+=======
+
 library(tidyverse)
 library(rpart)
+library(rpart.plot)
+
+=======
 
 redWineData = read_delim("winequality-red.csv", delim = ";")
 whiteWineData = read_delim("winequality-white.csv", delim = ";")

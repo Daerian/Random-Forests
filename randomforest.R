@@ -7,6 +7,7 @@ B - Number of trees chosen for each bootstrap sample
 
 library(tidyverse)
 <<<<<<< HEAD
+<<<<<<< HEAD
 library(randomForest)
 library(caret)
 
@@ -38,6 +39,8 @@ confusionMatrix(table(pred1_wq, wq_test$quality)) #Need install "caret" and inst
 #Row: Predicted
 #Source: https://www.youtube.com/watch?v=gmmV4drPTS4
 =======
+=======
+>>>>>>> kevin
 library(rattle)
 library(rpart.plot)
 library(RColorBrewer)
@@ -52,7 +55,12 @@ BSSample <- function(Z) {
 }
 
 CompPredictErr <- function() {
+<<<<<<< HEAD
   # TODO: Implement loss function
 }
 
+>>>>>>> kevin
+=======
+  # TODO: Loss function
+}
 >>>>>>> kevin
