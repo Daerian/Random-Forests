@@ -20,6 +20,5 @@ BSSample <- function(Z) {
 }
 
 CompPredictErr <- function() {
-  # TODO: Implement loss function
+  # TODO: Loss function
 }
-
