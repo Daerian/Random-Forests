@@ -1,16 +1,7 @@
-" 
-Hyperparameters
-================
-m - Number of predictors to use for constructing trees
-B - Number of trees chosen for each bootstrap sample
-"
-
 library(tidyverse)
-<<<<<<< HEAD
-<<<<<<< HEAD
 library(randomForest)
 library(caret)
-
+set.seed(123)
 #Get Data
 wq_data <- read_delim('winequality-red.csv', delim=";")
 wq_data$quality <- as.factor(wq_data$quality)
@@ -38,29 +29,3 @@ confusionMatrix(table(pred1_wq, wq_test$quality)) #Need install "caret" and inst
 #Column: Actual
 #Row: Predicted
 #Source: https://www.youtube.com/watch?v=gmmV4drPTS4
-=======
-=======
->>>>>>> kevin
-library(rattle)
-library(rpart.plot)
-library(RColorBrewer)
-
-RandForest <- function (Z, labels, m, B) {
-  bootstrap <- BSSample(sample(Z, m, replace=FALSE))
-}
-
-BSSample <- function(Z) {
-  bssamp <- sample_n(Z, nrow(Z), replace=TRUE)
-  return(bssamp)
-}
-
-CompPredictErr <- function() {
-<<<<<<< HEAD
-  # TODO: Implement loss function
-}
-
->>>>>>> kevin
-=======
-  # TODO: Loss function
-}
->>>>>>> kevin
