@@ -12,10 +12,12 @@ rm(list = ls())
 require(tidyverse)
 require(rpart)
 require(rpart.plot)
+require(robustbase)
 
 library(tidyverse)
 library(rpart)
 library(rpart.plot)
+library(robustbase)
 
 
 ################################### READ AND CLEAN DATA ############################################
@@ -34,34 +36,37 @@ whiteWineData = whiteWineData %>% mutate (Type = "White")
 wineData = rbind(redWineData,whiteWineData)
 # Remove spaces from column names
 names(wineData) = gsub(" ","_", names(wineData))
+wineData$quality  = as.factor(wineData$quality)
+wineData$Type = as.factor(wineData$Type)
 
 
+##################################### SUMMARY STATISTICS ########################################
+
+wineData %>% group_by(Type) %>% summarize(n=n())
+wineData %>% group_by(quality) %>% summarize(n=n())
+hist.chlorides = hist(wineData$chlorides)
+hist.ph = hist(wineData$pH)
+hist.citricac = hist(wineData$citric_acid)
+hist.ressugar = hist(wineData$residual_sugar)
 
 ##################################### BUILD A TREE ##############################################
 
 bt = function() {
-  sample.wineData = sample_n(wineData, 1000, replace=TRUE)
+  sample.wineData = sample_n(wineData, nrow(wineData), replace=TRUE)
   sample.p.wineData = sample(sample.wineData[,c(-12,-13)], 4, replace=FALSE)
   param = paste("quality ~", paste(names(sample.p.wineData), collapse=" + "))
   sample.p.wineData$quality = sample.wineData$quality
   column.names = colnames(sample.p.wineData)
   trees=rpart(formula=param, data=sample.p.wineData, method='class')
-  #rpart.plot(trees)
-  return(trees)
+  rpart.plot(trees)
+  ret = list()
+  ret[[1]] = trees
+  ret[[2]] = sample.p.wineData
+  ret[[3]] = merge(wineData,sample.p.wineData)
+  return(ret)
 }
 
-
-# Forest Algo
-forest = function(num_trees){
-  forest=list()
-  for (i in 1:num_trees){
-    forest[[i]] = bt()
-  }
-  return (forest)
+forest = list()
+for (i in 1:10) {
+  forest[[i]] = bt()
 }
-
-# 
-trees2 = forest(3)
-rpart.plot(trees2[[2]])
-
-
