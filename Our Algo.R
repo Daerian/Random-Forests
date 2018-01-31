@@ -14,7 +14,7 @@ for (lib in libraries) {
   if (!require(lib, character.only = TRUE)) {
     install.packages(lib)
     library(lib, character.only = TRUE)
-  } else {
+  } else if (!(lib %in% (.packages()))){
     library(lib, character.only = TRUE)
   }
 }
