@@ -9,16 +9,15 @@ B - Number of trees chosen for each bootstrap sample
 ################################# LIBRARIES AND MISCELLANEOUS ######################################
 rm(list = ls())
 
-require(tidyverse)
-require(rpart)
-require(rpart.plot)
-require(robustbase)
-
-library(tidyverse)
-library(rpart)
-library(rpart.plot)
-library(robustbase)
-
+libraries = c('tidyverse','rpart','rpart.plot','robustbase','dplyr')
+for (lib in libraries) {
+  if (!require(lib, character.only = TRUE)) {
+    install.packages(lib)
+    library(lib, character.only = TRUE)
+  } else {
+    library(lib, character.only = TRUE)
+  }
+}
 
 ################################### READ AND CLEAN DATA ############################################
 
@@ -62,7 +61,7 @@ bt = function() {
   ret = list()
   ret[[1]] = trees
   ret[[2]] = sample.p.wineData
-  ret[[3]] = merge(wineData,sample.p.wineData)
+  ret[[3]] = anti_join(wineData, sample.wineData)
   return(ret)
 }
 
