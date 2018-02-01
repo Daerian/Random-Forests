@@ -12,7 +12,7 @@ rm(list = ls())
 Please add all required libraries to the 'libraries' vector of strings below. All libraries in the
 vector of strings will be installed and/or loaded on runtime if not already installed/loaded.
 "
-libraries = c('tidyverse','rpart','rpart.plot','robustbase','dplyr')
+libraries = c('tidyverse','rpart','rpart.plot','robustbase','dplyr', 'dbplyr')
 
 for (lib in libraries) {
   if (!require(lib, character.only = TRUE)) {
@@ -79,15 +79,37 @@ bt = function() {
   rpart.plot(trees)
   ret = list()
   ret[[1]] = trees
-  ret[[2]] = sample.p.wineData
   
   # TODO Confirm if this outputs the correct data frame with all observations that are NOT used
   #      in generating the classification tree for a specific bootstrap sample.
-  ret[[3]] = anti_join(wineData, sample.wineData)
+  ret[[2]] = anti_join(wineData, sample.wineData)
+  ret[[3]] = trees[["variable.importance"]]
   return(ret)
 }
 
 forest = list()
+obs = list()
+pars = list()
 for (i in 1:10) {
   forest[[i]] = bt()
+  obs[[i]] = forest[[i]][2]
 }
+
+ind = 0
+for (parameter in param){
+  ind = ind+1
+  tot = 0
+  mag = 0
+  for (tree in forest){
+    for (i in 1:length(tree[[3]])){
+      if (names(tree[[3]][i]) == parameter){
+        tot = tot + tree[[3]][[i]]
+        mag = mag + 1
+      }
+    }
+  }
+  
+  est[[ind]]= tot/mag
+}
+
+names(est) = param
