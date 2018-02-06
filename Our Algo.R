@@ -42,6 +42,21 @@ names(wineData) = gsub(" ","_", names(wineData))
 wineData$quality  = as.factor(wineData$quality)
 wineData$Type = as.factor(wineData$Type)
 
+######################################### CONSTANTS #############################################
+
+# A function to set the constants needed for our algorithm in other places,
+# dat - the data frame
+Constant_Set = function(dat) {
+  m = ncol(dat) / 2
+  col_nam = colnames(dat)
+  ret = list()
+  ret[[1]] = m
+  ret[[2]] = col_nam
+  return (ret)
+}
+Const = Constant_Set(wineData)
+m = Const[[1]]
+col_nam = Const[[2]]
 
 ##################################### SUMMARY STATISTICS ########################################
 
@@ -87,29 +102,41 @@ bt = function() {
   return(ret)
 }
 
-forest = list()
-obs = list()
-pars = list()
-for (i in 1:10) {
-  forest[[i]] = bt()
-  obs[[i]] = forest[[i]][2]
+
+## GET FOREST HERE
+Get_Forest = function(){
+  forest = list()
+  for (i in 1:10) {
+    forest[[i]] = bt()
+  }
+  return(forest)
 }
 
-ind = 0
-for (parameter in param){
-  ind = ind+1
-  tot = 0
-  mag = 0
-  for (tree in forest){
-    for (i in 1:length(tree[[3]])){
-      if (names(tree[[3]][i]) == parameter){
-        tot = tot + tree[[3]][[i]]
-        mag = mag + 1
+
+# REGN CLASSIFIER
+Regn_Predicts = function(){
+  ind = 0
+  predicts = list()
+  forest=Get_Forest()
+  for (n in 1:length(col_nam)){
+    parameter = col_nam[n]
+    ind = ind+1
+    tot = 0
+    mag = 0
+    for (t in 1:length(forest)){
+      tree=forest[[t]]
+      for (i in 1:length(tree[[3]])){
+        if (names(tree[[3]][i]) == parameter){
+          tot = tot + tree[[3]][[i]]
+          mag = mag + 1
+        }
       }
     }
+    predicts[[ind]]= tot/mag
   }
-  
-  est[[ind]]= tot/mag
+  names(predicts) = col_nam
+  return(predicts)
 }
 
-names(est) = param
+preds = Regn_Predicts()
+preds = preds[]
