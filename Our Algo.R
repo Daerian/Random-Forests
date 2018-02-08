@@ -1,7 +1,7 @@
 " 
 Hyperparameters
 ================
-m - Number of predictors to use for constructing trees
+p - Number of predictors to use for constructing trees
 B - Number of trees chosen for each bootstrap sample
 "
 
@@ -68,7 +68,7 @@ hist.ph = hist(wineData$pH)
 hist.citricac = hist(wineData$citric_acid)
 hist.ressugar = hist(wineData$residual_sugar)
 
-##################################### BUILD A TREE ##############################################
+##################################### BUILD A TREE / FOREST ######################################
 
 "
 REQUIREMENTS
@@ -112,7 +112,7 @@ BT_Tree = function(dat, p, tree.print=FALSE) {
 }
 
 
-## GET FOREST HERE
+# Returns a forest
 Get_Forest = function(dat, B, p){
   forest = list()
   for (i in 1:B) {
@@ -121,6 +121,7 @@ Get_Forest = function(dat, B, p){
   return(forest)
 }
 
+############################################ CLASSIFICATION ######################################
 
 "
 This function takes as input:
@@ -141,6 +142,9 @@ Classify = function(forest, obs){
   }
   return (predictions)
 }
+
+
+####################################### REGRESSION ##############################################
 
 RegClass = function(forest,obs){
   predictions = 0 # will add all the predictions, then divide by numTrees to get average
@@ -181,6 +185,9 @@ Regn_Predicts = function(){
   return(predicts)
 }
 "
+
+################################## FUNCTION CALLS ####################################################
+
 fo=Get_Forest(wineData, 10, 4)
 "preds = Regn_Predicts()
 preds = preds[]"
