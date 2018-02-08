@@ -41,6 +41,7 @@ wineData = rbind(redWineData,whiteWineData)
 names(wineData) = gsub(" ","_", names(wineData))
 wineData$quality  = as.factor(wineData$quality)
 wineData$Type = as.factor(wineData$Type)
+wineData = wineData[,-ncol(wineData)]
 
 ######################################### CONSTANTS #############################################
 
@@ -92,7 +93,7 @@ bt.return[[2]]
 # To access all observations not used in sampled predictors & bootstrapped sample
 bt.return[[3]]
 "
-BT_Tree = function(dat, p) {
+BT_Tree = function(dat, p, tree.print=FALSE) {
   last_col = ncol(dat)
   pred_name = paste(colnames(dat[,last_col]),paste(" ~"))
   sample.dat = sample_n(dat, nrow(dat), replace=TRUE)
@@ -100,20 +101,22 @@ BT_Tree = function(dat, p) {
   param = paste(pred_name, paste(names(sample.p.dat), collapse = " + "))
   sample.p.dat[,colnames(dat[,last_col])] = sample.dat[,last_col]
   trees = rpart(formula=param, data=sample.p.dat, method='class')
-  rpart.plot(trees)
+  if (tree.print) {
+    rpart.plot(trees)
+  }
   ret = list()
   ret[[1]] = trees
-  ret[[2]] = anti_join(dat, sample.dat)
+  ret[[2]] = anti_join(dat, sample.dat, by=names(dat))
   ret[[3]] = trees[["variable.importance"]]
   return(ret)
 }
 
 
 ## GET FOREST HERE
-Get_Forest = function(){
+Get_Forest = function(dat, B, p){
   forest = list()
-  for (i in 1:10) {
-    forest[[i]] = BT_Tree()
+  for (i in 1:B) {
+    forest[[i]] = BT_Tree(dat, p)
   }
   return(forest)
 }
@@ -178,6 +181,6 @@ Regn_Predicts = function(){
   return(predicts)
 }
 "
-fo=Get_Forest()
+fo=Get_Forest(wineData, 10, 4)
 "preds = Regn_Predicts()
 preds = preds[]"
