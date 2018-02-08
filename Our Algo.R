@@ -113,6 +113,40 @@ Get_Forest = function(){
 }
 
 
+"
+This function takes as input:
+forest = a random Forest, ie a list of trees which have been trained via a regression model.
+obs - dataframe an observation to predict  -- predictors only.
+
+The function will take the predictor values for this observation, and return to the user 
+the classification for the random forest provided in the input as 'forest' 
+"
+Classify = function(forest, obs){
+  predictions = 0 # will add all the predictions, then divide by numTrees to get average
+  numTrees = length(forest)
+  obs = as.data.frame(obs)
+  i = 0
+  # This for loop will add the predictions of every tree together, so they can be aggregated
+  for (i in 1:numTrees){
+    predictions = predict(forest[[i]][[1]], obs, type = "class")
+  }
+  return (predictions)
+}
+
+RegClass = function(forest,obs){
+  predictions = 0 # will add all the predictions, then divide by numTrees to get average
+  numTrees = length(forest)
+  obs = as.data.frame(obs)
+  i = 0
+  # This for loop will add the predictions of every tree together, so they can be aggregated
+  for (i in 1:numTrees){
+    predictions = predict(forest[[i]][[1]], obs, type = "matrix")
+  }
+  return (predictions)
+}
+
+
+"
 # REGN CLASSIFIER
 Regn_Predicts = function(){
   ind = 0
@@ -137,6 +171,7 @@ Regn_Predicts = function(){
   names(predicts) = col_nam
   return(predicts)
 }
-
-preds = Regn_Predicts()
-preds = preds[]
+"
+fo=Get_Forest()
+"preds = Regn_Predicts()
+preds = preds[]"
