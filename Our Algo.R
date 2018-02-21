@@ -140,19 +140,27 @@ RegClass = function(forest,obs){
   i = 0
   # This for loop will add the predictions of every tree together, so they can be aggregated
   for (i in 1:numTrees){
-    predictions = predict(forest[[i]][[1]], obs, type = "matrix")
+    predictions = predictions + predict(forest[[i]][[1]], obs, type = "vector")
   }
+  predictions = predictions/numTrees
   return (predictions)
 }
 
-
+"
+A function that calculates accuracy for regresison functions
+"
+RegnAcc = function(predicts, labels){
+  tot  = sum((labels-predicts)^2)
+  relative_tot = tot/length(predicts)
+  return (relative_tot)
+}
 "
 # REGN CLASSIFIER
 Regn_Predicts = function(){
   ind = 0
   predicts = list()
   forest=Get_Forest()
-  for (n in 1:length(col_nam)){
+  for (n in 1:length(col_nam) ){
     parameter = col_nam[n]
     ind = ind+1
     tot = 0
