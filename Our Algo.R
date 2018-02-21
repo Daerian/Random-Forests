@@ -1,7 +1,7 @@
 " 
 Hyperparameters
 ================
-m - Number of predictors to use for constructing trees
+p - Number of predictors to use for constructing trees
 B - Number of trees chosen for each bootstrap sample
 "
 
@@ -41,6 +41,7 @@ wineData = rbind(redWineData,whiteWineData)
 names(wineData) = gsub(" ","_", names(wineData))
 wineData$quality  = as.factor(wineData$quality)
 wineData$Type = as.factor(wineData$Type)
+wineData = wineData[,-ncol(wineData)]
 
 ######################################### CONSTANTS #############################################
 
@@ -67,9 +68,17 @@ hist.ph = hist(wineData$pH)
 hist.citricac = hist(wineData$citric_acid)
 hist.ressugar = hist(wineData$residual_sugar)
 
-##################################### BUILD A TREE ##############################################
+##################################### BUILD A TREE / FOREST ######################################
 
 "
+REQUIREMENTS
+==============
+  1. (a) dat - Data frame that contains the predictors and the classes in the last column
+     (b) p - Number of parameters to be sampled
+
+
+DESCRIPTION
+============
 'bt' function returns a list of objects. The objects are returned in the following order:
   [1] Classification tree
   [2] Sampled parameters combined with bootstrap sample
@@ -84,34 +93,35 @@ bt.return[[2]]
 # To access all observations not used in sampled predictors & bootstrapped sample
 bt.return[[3]]
 "
-bt = function() {
-  sample.wineData = sample_n(wineData, nrow(wineData), replace=TRUE)
-  sample.p.wineData = sample(sample.wineData[,c(-12,-13)], 4, replace=FALSE)
-  param = paste("quality ~", paste(names(sample.p.wineData), collapse=" + "))
-  sample.p.wineData$quality = sample.wineData$quality
-  column.names = colnames(sample.p.wineData)
-  trees=rpart(formula=param, data=sample.p.wineData, method='class')
-  rpart.plot(trees)
+BT_Tree = function(dat, p, tree.print=FALSE) {
+  last_col = ncol(dat)
+  pred_name = paste(colnames(dat[,last_col]),paste(" ~"))
+  sample.dat = sample_n(dat, nrow(dat), replace=TRUE)
+  sample.p.dat = sample(sample.dat[,-last_col], p, replace=FALSE)
+  param = paste(pred_name, paste(names(sample.p.dat), collapse = " + "))
+  sample.p.dat[,colnames(dat[,last_col])] = sample.dat[,last_col]
+  trees = rpart(formula=param, data=sample.p.dat, method='class')
+  if (tree.print) {
+    rpart.plot(trees)
+  }
   ret = list()
   ret[[1]] = trees
-  
-  # TODO Confirm if this outputs the correct data frame with all observations that are NOT used
-  #      in generating the classification tree for a specific bootstrap sample.
-  ret[[2]] = anti_join(wineData, sample.wineData)
+  ret[[2]] = anti_join(dat, sample.dat, by=names(dat))
   ret[[3]] = trees[["variable.importance"]]
   return(ret)
 }
 
 
-## GET FOREST HERE
-Get_Forest = function(){
+# Returns a forest
+Get_Forest = function(dat, B, p){
   forest = list()
-  for (i in 1:10) {
-    forest[[i]] = bt()
+  for (i in 1:B) {
+    forest[[i]] = BT_Tree(dat, p)
   }
   return(forest)
 }
 
+############################################ CLASSIFICATION ######################################
 
 "
 This function takes as input:
@@ -132,6 +142,9 @@ Classify = function(forest, obs){
   }
   return (predictions)
 }
+
+
+####################################### REGRESSION ##############################################
 
 RegClass = function(forest,obs){
   predictions = 0 # will add all the predictions, then divide by numTrees to get average
@@ -180,6 +193,9 @@ Regn_Predicts = function(){
   return(predicts)
 }
 "
-fo=Get_Forest()
+
+################################## FUNCTION CALLS ####################################################
+
+fo=Get_Forest(wineData, 10, 4)
 "preds = Regn_Predicts()
 preds = preds[]"
