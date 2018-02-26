@@ -24,7 +24,7 @@ for (lib in libraries) {
 }
 
 ################################### READ AND CLEAN DATA ############################################
-
+###################################Wine Data#####################################################
 redWineData = read_delim("winequality-red.csv", delim = ";")
 whiteWineData = read_delim("winequality-white.csv", delim = ";")
 
@@ -42,6 +42,30 @@ names(wineData) = gsub(" ","_", names(wineData))
 wineData$quality  = as.factor(wineData$quality)
 wineData$Type = as.factor(wineData$Type)
 wineData = wineData[,-ncol(wineData)]
+##############################################################################################
+
+##############################Steel Data######################################################
+#read data in
+steelData = read.table("Faults.NNA",sep="")
+names = read.table("Faults27x7_var.txt",sep = "")
+names = as.list(names)
+names=unlist(names)
+steelData = as.data.frame(steelData)
+names(steelData) = names
+names(steelData) = gsub(" ","_", names)
+
+
+steelData = steelData %>% mutate(Type = TypeOfSteel_A300*3 + TypeOfSteel_A400*4)
+steelData = steelData[,c(-13,-12)]
+
+if ("TypeOfSteel_A300" %in% names(steelData)){
+  print("SUCK A DICK")
+} else {
+  print("CHING CHONG")
+}
+#############################################################################################
+
+
 
 ######################################### CONSTANTS #############################################
 
