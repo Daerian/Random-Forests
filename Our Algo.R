@@ -187,6 +187,15 @@ RegnAcc = function(predicts, labels){
   relative_tot = tot/(length(predicts) - 2)
   return (relative_tot)
 }
+
+RegR2 = function(predicts, labels){
+  avg = mean(labels)
+  upper = sum((predicts - avg)^2)
+  lower = sum((labels - avg)^2)
+  r2 = upper/lower
+  R2 = 1-r2
+  return (R2)
+}
 "
 # REGN CLASSIFIER
 Regn_Predicts = function(){
