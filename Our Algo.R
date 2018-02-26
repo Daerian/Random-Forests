@@ -58,7 +58,6 @@ names(steelData) = gsub(" ","_", names)
 steelData = steelData %>% mutate(Type = TypeOfSteel_A300*3 + TypeOfSteel_A400*4)
 steelData = steelData[,c(-13,-12)]
 
-
 #############################################################################################
 
 
@@ -183,8 +182,9 @@ RegClass = function(forest,obs){
 A function that calculates accuracy for regresison functions
 "
 RegnAcc = function(predicts, labels){
-  tot  = sum((labels-predicts)^2)
-  relative_tot = tot/length(predicts)
+  avg = mean(labels)
+  tot  = sum((predicts - avg)^2)
+  relative_tot = tot/(length(predicts) - 2)
   return (relative_tot)
 }
 "
