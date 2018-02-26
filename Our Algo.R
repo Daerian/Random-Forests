@@ -58,11 +58,7 @@ names(steelData) = gsub(" ","_", names)
 steelData = steelData %>% mutate(Type = TypeOfSteel_A300*3 + TypeOfSteel_A400*4)
 steelData = steelData[,c(-13,-12)]
 
-if ("TypeOfSteel_A300" %in% names(steelData)){
-  print("SUCK A DICK")
-} else {
-  print("CHING CHONG")
-}
+
 #############################################################################################
 
 
