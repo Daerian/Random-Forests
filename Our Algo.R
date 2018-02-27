@@ -74,18 +74,15 @@ Constant_Set = function(dat) {
   ret[[2]] = col_nam
   return (ret)
 }
-Const = Constant_Set(wineData)
-m = Const[[1]]
-col_nam = Const[[2]]
 
 ##################################### SUMMARY STATISTICS ########################################
 
-wineData %>% group_by(Type) %>% summarize(n=n())
+"wineData %>% group_by(Type) %>% summarize(n=n())
 wineData %>% group_by(quality) %>% summarize(n=n())
 hist.chlorides = hist(wineData$chlorides)
 hist.ph = hist(wineData$pH)
 hist.citricac = hist(wineData$citric_acid)
-hist.ressugar = hist(wineData$residual_sugar)
+hist.ressugar = hist(wineData$residual_sugar)"
 
 ##################################### BUILD A TREE / FOREST ######################################
 
@@ -112,7 +109,8 @@ bt.return[[2]]
 # To access all observations not used in sampled predictors & bootstrapped sample
 bt.return[[3]]
 "
-BT_Tree = function(dat, p, tree.print=FALSE) {
+BT_Tree = function(dat, labels, p, tree.print=FALSE) {
+  dat[,colnames(labels)] = labels
   last_col = ncol(dat)
   pred_name = paste(colnames(dat[,last_col]),paste(" ~"))
   sample.dat = sample_n(dat, nrow(dat), replace=TRUE)
@@ -132,10 +130,10 @@ BT_Tree = function(dat, p, tree.print=FALSE) {
 
 
 # Returns a forest
-Get_Forest = function(dat, B, p){
+Get_Forest = function(dat, labels, B, p){
   forest = list()
   for (i in 1:B) {
-    forest[[i]] = BT_Tree(dat, p)
+    forest[[i]] = BT_Tree(dat, labels, p)
   }
   return(forest)
 }
@@ -225,6 +223,38 @@ Regn_Predicts = function(){
 
 ################################## FUNCTION CALLS ####################################################
 
-fo=Get_Forest(wineData, 10, 4)
+#fo=Get_Forest(wineData, 10, 4)
 "preds = Regn_Predicts()
 preds = preds[]"
+
+################################## EXAMPLE CALLS ####################################################
+
+# Training set, Training labels, Testing set, Testing labels, # of trees, # of params / tree
+Perform = function(Df, labels, Df2, labels2, num_trees, num_vars) {
+  # Set Constants
+  time = proc.time()
+  Const = Constant_Set(wineData)
+  m = Const[[1]]
+  col_nam = Const[[2]]
+  fo=Get_Forest(Df, labels, num_trees, num_vars)
+  predictions = RegClass(fo,Df2)
+  MSE = RegnAcc(predictions, labels2)
+  R2 = RegR2(predictions, labels2)
+  print("Results:")
+  print (paste (c("MSE = ", MSE), collapse = ""))
+  print (paste (c("R2 = ", R2), collapse = ""))
+  print("Timings: ")
+  print(proc.time() - time)
+  return (fo)
+}
+
+w1 = sample_n(wineData, nrow(wineData)/2, replace=FALSE)
+w2 = anti_join(wineData,w1)
+labels = as.numeric(unlist(w1[ncol(w1)]))
+labels2 = as.numeric(unlist(w2[ncol(w2)]))
+w1 = w1[,-w1[ncol(w1)]]
+w2 = w2[,-w1[ncol(w2)]]
+B = 500
+M = 1
+f = Perform(w1,labels,w2,labels2,B,M)
+
