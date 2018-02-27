@@ -168,11 +168,13 @@ RegClass = function(forest,obs){
   numTrees = length(forest)
   obs = as.data.frame(obs)
   i = 0
-  # This for loop will add the predictions of every tree together, so they can be aggregated
+  #This for loop will add the predictions of every tree together, so they can be aggregated
   for (i in 1:numTrees){
     predictions = predictions + predict(forest[[i]][[1]], obs, type = "vector")
   }
+  
   predictions = predictions/numTrees
+  #predictions = predictions + predict(forest[[1]][[1]], obs, type = "vector")
   return (predictions)
 }
 
@@ -181,14 +183,14 @@ A function that calculates accuracy for regresison functions
 "
 RegnAcc = function(predicts, labels){
   avg = mean(labels)
-  tot  = sum((predicts - avg)^2)
+  tot  = sum((predicts - labels)^2)
   relative_tot = tot/(length(predicts) - 2)
   return (relative_tot)
 }
 
 RegR2 = function(predicts, labels){
   avg = mean(labels)
-  upper = sum((predicts - avg)^2)
+  upper = sum((predicts - labels)^2)
   lower = sum((labels - avg)^2)
   r2 = upper/lower
   R2 = 1-r2
@@ -250,11 +252,14 @@ Perform = function(Df, labels, Df2, labels2, num_trees, num_vars) {
 
 w1 = sample_n(wineData, nrow(wineData)/2, replace=FALSE)
 w2 = anti_join(wineData,w1)
-labels = as.numeric(unlist(w1[ncol(w1)]))
+labels = w1[ncol(w1)]
 labels2 = as.numeric(unlist(w2[ncol(w2)]))
-w1 = w1[,-w1[ncol(w1)]]
-w2 = w2[,-w1[ncol(w2)]]
-B = 500
+w1 = w1[,-ncol(w1)]
+w2 = w2[,-ncol(w2)]
+B = 50
 M = 1
 f = Perform(w1,labels,w2,labels2,B,M)
+
+fo=Get_Forest(w1, labels, B, M)
+predictions = RegClass(fo,w2)
 
