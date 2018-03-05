@@ -1,0 +1,17 @@
+---
+title: 'Application in Random Forest'
+author: "Guan Yu Chen, Daerian Dilkumar, Derek Frempong, Li Zong"
+date: "March 4, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(rpart)
+library(rpart.plot)
+```
+
+\newpage
+\begin{center}\textsc{\LARGE \underline{Appendix}}\end{center}
+\appendix
