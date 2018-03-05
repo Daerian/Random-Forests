@@ -53,10 +53,13 @@ names=unlist(names)
 steelData = as.data.frame(steelData)
 names(steelData) = names
 names(steelData) = gsub(" ","_", names)
-
-
-steelData = steelData %>% mutate(Type = TypeOfSteel_A300*3 + TypeOfSteel_A400*4)
-steelData = steelData[,c(-13,-12)]
+SteelData = na.omit(steelData)
+SteelData = SteelData %>% mutate(Type = TypeOfSteel_A300*3 + TypeOfSteel_A400*4)
+SteelData = SteelData[,c(-13,-12)]
+SteelData = as.data.frame(SteelData)
+SteelData$Type = as.factor(SteelData$Type)
+drops = c("Z_Scratch","K_Scatch","Stains","Dirtiness","Bumps","Other_Faults")
+SteelData = SteelData[ , !(names(SteelData) %in% drops)]
 
 #############################################################################################
 
@@ -262,4 +265,18 @@ f = Perform(w1,labels,w2,labels2,B,M)
 
 fo=Get_Forest(w1, labels, B, M)
 predictions = RegClass(fo,w2)
+
+
+v1 = sample_n(SteelData, nrow(SteelData)/2, replace=FALSE)
+v2 = anti_join(SteelData,v1)
+Labels = v1[ncol(v1)]
+Labels2 = as.numeric(unlist(v2[ncol(v2)]))
+v1 = v1[,-ncol(v1)]
+v2 = v2[,-ncol(v2)]
+B2= 50
+M2 = 1
+f2 = Perform(v1,Labels,v2,Labels2,B2,M2)
+
+fo2 = Get_Forest(v1,Labels,B2,M2)
+predictions = RegClass(fo2,v2)
 
