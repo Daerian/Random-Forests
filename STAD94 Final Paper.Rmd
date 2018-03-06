@@ -2,6 +2,9 @@
 title: 'Application in Random Forest'
 author: "Guan Yu Chen, Daerian Dilkumar, Derek Frempong, Li Zong"
 date: "March 4, 2018"
+document-class: report
+header-includes:
+  - \usepackage{bbm}
 output: pdf_document
 ---
 
@@ -10,8 +13,30 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(rpart)
 library(rpart.plot)
+library(dplyr)
 ```
 
+\tableofcontents
 \newpage
-\begin{center}\textsc{\LARGE \underline{Appendix}}\end{center}
-\appendix
+\section{Introduction}
+
+\section{Methodologies}
+
+\section{Software Development Process}
+
+\section{Results}
+
+\section{Wrap-Up}
+
+\section{Appendix}
+\textsc{Note:} The following libraries are used throughout the code: \texttt{tidyverse}, \texttt{dplyr}, \texttt{rpart}, and \texttt{rpart.plot}.
+
+\section{References}
+<!-- in-text: (Gareth, n.d.) -->
+Gareth, J. \textit{An Introduction to Statistical Learning: with Applications in R}. Springer.
+
+<!-- in-text: (Hastie, n.d.) -->
+Hastie, T. \textit{The elements of statistical learning [electronic resource] : data mining, inference, and prediction} (2nd ed.). Springer.
+
+<!-- in-text: ("Random forest", 2018) -->
+\textit{Random forest}. (2018). \textit{En.wikipedia.org}. Retrieved 22 January 2018, from [https://en.wikipedia.org/wiki/Random_forest](https://en.wikipedia.org/wiki/Random_forest)
