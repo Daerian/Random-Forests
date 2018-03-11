@@ -163,6 +163,11 @@ Classify = function(forest, obs){
   return (predictions)
 }
 
+ClassLoss = function(predicts, labels){
+  loss =  1 - as.numeric(predicts == labels)
+  error = sum(loss) / length(labels)
+  return (error)
+}
 
 ####################################### REGRESSION ##############################################
 
