@@ -12,7 +12,8 @@ rm(list = ls())
 Please add all required libraries to the 'libraries' vector of strings below. All libraries in the
 vector of strings will be installed and/or loaded on runtime if not already installed/loaded.
 "
-libraries = c('tidyverse','rpart','rpart.plot','robustbase','dplyr', 'dbplyr')
+libraries = c('tidyverse','rpart','rpart.plot','robustbase','dplyr', 'dbplyr', 'AppliedPredictiveModeling',
+              'datasets','mlbench')
 
 for (lib in libraries) {
   if (!require(lib, character.only = TRUE)) {
@@ -44,22 +45,21 @@ wineData$Type = as.factor(wineData$Type)
 wineData = wineData[,-ncol(wineData)]
 ##############################################################################################
 
-##############################Steel Data######################################################
-#read data in
-steelData = read.table("Faults.NNA",sep="")
-names = read.table("Faults27x7_var.txt",sep = "")
-names = as.list(names)
-names=unlist(names)
-steelData = as.data.frame(steelData)
-names(steelData) = names
-names(steelData) = gsub(" ","_", names)
-SteelData = na.omit(steelData)
-SteelData = SteelData %>% mutate(Type = TypeOfSteel_A300*3 + TypeOfSteel_A400*4)
-SteelData = SteelData[,c(-13,-12)]
-SteelData = as.data.frame(SteelData)
-SteelData$Type = as.factor(SteelData$Type)
-drops = c("Z_Scratch","K_Scatch","Stains","Dirtiness","Bumps","Other_Faults")
-SteelData = SteelData[ , !(names(SteelData) %in% drops)]
+##############################Breast Cancer Data######################################################
+#read data into
+data(BreastCancer)
+#remove Nas
+BreastCancer = as.data.frame(na.omit(BreastCancer))
+#change the benign to 0 and malignant to 1 for the classes
+BC=within(BreastCancer, Class <- factor(Class, labels = c(0,1)))
+#get rid of the id
+BC = BC[,-1]
+#make the class into factors if already not done
+BC[, 1:9] <- sapply(BC[, 1:9], as.numeric)
+
+
+
+
 
 #############################################################################################
 
@@ -235,10 +235,10 @@ preds = preds[]"
 ################################## EXAMPLE CALLS ####################################################
 
 # Training set, Training labels, Testing set, Testing labels, # of trees, # of params / tree
-Perform = function(Df, labels, Df2, labels2, num_trees, num_vars) {
+Perform = function(Df, labels, Df2, labels2, num_trees, num_vars,Data) {
   # Set Constants
   time = proc.time()
-  Const = Constant_Set(wineData)
+  Const = Constant_Set(Data)
   m = Const[[1]]
   col_nam = Const[[2]]
   fo=Get_Forest(Df, labels, num_trees, num_vars)
@@ -261,21 +261,21 @@ w1 = w1[,-ncol(w1)]
 w2 = w2[,-ncol(w2)]
 B = 50
 M = 1
-f = Perform(w1,labels,w2,labels2,B,M)
+f = Perform(w1,labels,w2,labels2,B,M,wineData)
 
 fo=Get_Forest(w1, labels, B, M)
 predictions = RegClass(fo,w2)
 
 
-v1 = sample_n(SteelData, nrow(SteelData)/2, replace=FALSE)
-v2 = anti_join(SteelData,v1)
+v1 = sample_n(BC, nrow(BC)/2, replace=FALSE)
+v2 = anti_join(BC,v1)
 Labels = v1[ncol(v1)]
 Labels2 = as.numeric(unlist(v2[ncol(v2)]))
 v1 = v1[,-ncol(v1)]
 v2 = v2[,-ncol(v2)]
 B2= 50
 M2 = 1
-f2 = Perform(v1,Labels,v2,Labels2,B2,M2)
+f2 = Perform(v1,Labels,v2,Labels2,B2,M2,BC)
 
 fo2 = Get_Forest(v1,Labels,B2,M2)
 predictions = RegClass(fo2,v2)
