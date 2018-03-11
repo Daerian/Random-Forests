@@ -255,7 +255,7 @@ Perform = function(Df, labels, Df2, labels2, num_trees, num_vars,Data) {
   print (paste (c("R2 = ", R2), collapse = ""))
   print("Timings: ")
   print(proc.time() - time)
-  return (fo)
+  return (predictions)
 }
 
 w1 = sample_n(wineData, nrow(wineData)/2, replace=FALSE)
@@ -266,10 +266,10 @@ w1 = w1[,-ncol(w1)]
 w2 = w2[,-ncol(w2)]
 B = 50
 M = 1
-f = Perform(w1,labels,w2,labels2,B,M,wineData)
+pred = Perform(w1,labels,w2,labels2,B,M,wineData)
 
-fo=Get_Forest(w1, labels, B, M)
-predictions = RegClass(fo,w2)
+#fo=Get_Forest(w1, labels, B, M)
+#predictions = RegClass(fo,w2)
 
 
 v1 = sample_n(BC, nrow(BC)/2, replace=FALSE)
@@ -282,6 +282,6 @@ B2= 50
 M2 = 1
 f2 = Perform(v1,Labels,v2,Labels2,B2,M2,BC)
 
-fo2 = Get_Forest(v1,Labels,B2,M2)
-predictions = RegClass(fo2,v2)
+#fo2 = Get_Forest(v1,Labels,B2,M2)
+#predictions = RegClass(fo2,v2)
 
