@@ -1,11 +1,13 @@
 ---
-title: 'Application in Random Forest'
-author: "Guan Yu Chen, Daerian Dilkumar, Derek Frempong, Li Zong"
-date: "March 4, 2018"
+title: "A Look Into The Random Forest Algorithm And It's Applications"
+author: "Daerian Dilkumar, Guan Yu Chen, Derek Frempong, Li Zong"
+date: "April 4, 2018"
 document-class: report
 header-includes:
   - \usepackage{bbm}
-output: pdf_document
+output:
+  pdf_document: 
+    number_sections: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -16,9 +18,17 @@ library(rpart.plot)
 library(dplyr)
 ```
 
+\newpage
 \tableofcontents
 \newpage
+
+
 \section{Introduction}
+
+This project was aimed at building and using an algorithm that will create predictions for classification and regression problems by using the idea of "random forests." A Random Forest is a collections of decision trees which each perform predictions, after which the forest will aggregate these or select a prediction which it will return. Each tree is trained over a bootstrapepd sample of the training set, with a randomly selected set of variables to create it's feature space. This means that each tree has high bias, however since the forest is intended for use with hundreds of trees, the bias in the overall forest drops significantly lower than other models for this result. 
+
+
+
 
 \section{Methodologies}
 
@@ -30,6 +40,7 @@ library(dplyr)
 
 \section{Appendix}
 \textsc{Note:} The following libraries are used throughout the code: \texttt{tidyverse}, \texttt{dplyr}, \texttt{rpart}, and \texttt{rpart.plot}.
+
 
 \section{References}
 <!-- in-text: (Gareth, n.d.) -->
