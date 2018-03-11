@@ -115,11 +115,11 @@ bt.return[[3]]
 BT_Tree = function(dat, labels, p, tree.print=FALSE) {
   dat[,colnames(labels)] = labels
   last_col = ncol(dat)
-  pred_name = paste(colnames(dat[,last_col]),paste(" ~"))
+  pred_name = paste(colnames(dat)[ncol(dat)],paste(" ~"))
   sample.dat = sample_n(dat, nrow(dat), replace=TRUE)
   sample.p.dat = sample(sample.dat[,-last_col], p, replace=FALSE)
   param = paste(pred_name, paste(names(sample.p.dat), collapse = " + "))
-  sample.p.dat[,colnames(dat[,last_col])] = sample.dat[,last_col]
+  sample.p.dat[,colnames(dat)[ncol(dat)]] = sample.dat[,last_col]
   trees = rpart(formula=param, data=sample.p.dat, method='class')
   if (tree.print) {
     rpart.plot(trees)
