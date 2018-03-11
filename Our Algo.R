@@ -268,13 +268,11 @@ B = 50
 M = 1
 pred = Perform(w1,labels,w2,labels2,B,M,wineData)
 
-<<<<<<< HEAD
+
 fo=Get_Forest(w1, labels, B, M)
 predictions = Regress(f,w2)
-=======
-#fo=Get_Forest(w1, labels, B, M)
-#predictions = RegClass(fo,w2)
->>>>>>> 22198d2c4c778d81380e2fad87ca770480113818
+
+
 
 
 v1 = sample_n(BC, nrow(BC)/2, replace=FALSE)
@@ -287,11 +285,7 @@ B2= 50
 M2 = 1
 f2 = Perform(v1,Labels,v2,Labels2,B2,M2,BC)
 
-<<<<<<< HEAD
 fo2 = Get_Forest(v1,Labels,B2,M2)
 predictions = Regress(fo2,v2)
-=======
-#fo2 = Get_Forest(v1,Labels,B2,M2)
-#predictions = RegClass(fo2,v2)
->>>>>>> 22198d2c4c778d81380e2fad87ca770480113818
+
 
