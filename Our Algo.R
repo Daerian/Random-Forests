@@ -171,7 +171,7 @@ ClassLoss = function(predicts, labels){
 
 ####################################### REGRESSION ##############################################
 
-RegClass = function(forest,obs){
+Regress = function(forest,obs){
   predictions = 0 # will add all the predictions, then divide by numTrees to get average
   numTrees = length(forest)
   obs = as.data.frame(obs)
@@ -247,7 +247,7 @@ Perform = function(Df, labels, Df2, labels2, num_trees, num_vars,Data) {
   m = Const[[1]]
   col_nam = Const[[2]]
   fo=Get_Forest(Df, labels, num_trees, num_vars)
-  predictions = RegClass(fo,Df2)
+  predictions = Regress(fo,Df2)
   MSE = RegnAcc(predictions, labels2)
   R2 = RegR2(predictions, labels2)
   print("Results:")
@@ -269,7 +269,7 @@ M = 1
 f = Perform(w1,labels,w2,labels2,B,M,wineData)
 
 fo=Get_Forest(w1, labels, B, M)
-predictions = RegClass(fo,w2)
+predictions = Regress(f,w2)
 
 
 v1 = sample_n(BC, nrow(BC)/2, replace=FALSE)
@@ -283,5 +283,5 @@ M2 = 1
 f2 = Perform(v1,Labels,v2,Labels2,B2,M2,BC)
 
 fo2 = Get_Forest(v1,Labels,B2,M2)
-predictions = RegClass(fo2,v2)
+predictions = Regress(fo2,v2)
 
