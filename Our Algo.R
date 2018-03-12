@@ -46,7 +46,7 @@ wineData = wineData[,-ncol(wineData)]
 ##############################################################################################
 
 ##############################Breast Cancer Data######################################################
-#read data into
+#read data 
 data(BreastCancer)
 #remove Nas
 BreastCancer = as.data.frame(na.omit(BreastCancer))
@@ -57,7 +57,7 @@ BC = BC[,-1]
 #make the class into factors if already not done
 BC[, 1:9] <- sapply(BC[, 1:9], as.numeric)
 
-
+BC = BC %>% mutate(ind = as.numeric(rownames(BC)))
 
 
 
@@ -264,28 +264,40 @@ labels = w1[ncol(w1)]
 labels2 = as.numeric(unlist(w2[ncol(w2)]))
 w1 = w1[,-ncol(w1)]
 w2 = w2[,-ncol(w2)]
-B = 50
-M = 1
+B = 500
+M = 4
 pred = Perform(w1,labels,w2,labels2,B,M,wineData)
 
-
+#classification
 fo=Get_Forest(w1, labels, B, M)
-predictions = Regress(f,w2)
+classpred = Classify(fo,w2)
+cMatrix = table(unname(classpred),labels2)
+cMatrix
 
 
 
 
+#BC = distinct(BC)
 v1 = sample_n(BC, nrow(BC)/2, replace=FALSE)
-v2 = anti_join(BC,v1)
+v2 = anti_join(BC,v1, by=colnames(BC))
+v1 = v1[,-ncol(v1)]
+v2 = v2[,-ncol(v2)]
 Labels = v1[ncol(v1)]
 Labels2 = as.numeric(unlist(v2[ncol(v2)]))
 v1 = v1[,-ncol(v1)]
 v2 = v2[,-ncol(v2)]
-B2= 50
-M2 = 1
+B2= 600
+M2 = 4
 f2 = Perform(v1,Labels,v2,Labels2,B2,M2,BC)
 
+
+
 fo2 = Get_Forest(v1,Labels,B2,M2)
-predictions = Regress(fo2,v2)
+classpred2 = Classify(fo2,v2)
+cMatrix = table(unname(classpred2),Labels2)
+cMatrix
+ClassLoss(unname(classpred2),Labels2)
+
+
 
 
