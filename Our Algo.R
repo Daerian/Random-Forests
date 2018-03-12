@@ -247,12 +247,10 @@ Perform = function(Df, labels, Df2, labels2, num_trees, num_vars,Data) {
   m = Const[[1]]
   col_nam = Const[[2]]
   fo=Get_Forest(Df, labels, num_trees, num_vars)
-  predictions = RegClass(fo,Df2)
-  MSE = RegnAcc(predictions, labels2)
-  R2 = RegR2(predictions, labels2)
+  predictions = Classify(fo,Df2)
+  Loss = ClassLoss(predictions,labels2)
   print("Results:")
-  print (paste (c("MSE = ", MSE), collapse = ""))
-  print (paste (c("R2 = ", R2), collapse = ""))
+  print (paste (c("Loss = ", Loss), collapse = ""))
   print("Timings: ")
   print(proc.time() - time)
   return (predictions)
@@ -260,28 +258,30 @@ Perform = function(Df, labels, Df2, labels2, num_trees, num_vars,Data) {
 
 w1 = sample_n(wineData, nrow(wineData)/2, replace=FALSE)
 w2 = anti_join(wineData,w1)
-labels = w1[ncol(w1)]
+labs = w1[ncol(w1)]
 labels2 = as.numeric(unlist(w2[ncol(w2)]))
 w1 = w1[,-ncol(w1)]
 w2 = w2[,-ncol(w2)]
-B = 50
-M = 1
-pred = Perform(w1,labels,w2,labels2,B,M,wineData)
+B = 600
+M = 4
+pred = Perform(w1,labs,w2,labels2,B,M,wineData)
+
 
 #fo=Get_Forest(w1, labels, B, M)
 #predictions = RegClass(fo,w2)
 
 
-v1 = sample_n(BC, nrow(BC)/2, replace=FALSE)
-v2 = anti_join(BC,v1)
-Labels = v1[ncol(v1)]
-Labels2 = as.numeric(unlist(v2[ncol(v2)]))
-v1 = v1[,-ncol(v1)]
-v2 = v2[,-ncol(v2)]
-B2= 50
-M2 = 1
-f2 = Perform(v1,Labels,v2,Labels2,B2,M2,BC)
-
-#fo2 = Get_Forest(v1,Labels,B2,M2)
-#predictions = RegClass(fo2,v2)
-
+if (FALSE) {
+  v1 = sample_n(BC, nrow(BC)/2, replace=FALSE)
+  v2 = anti_join(BC,v1)
+  Labels = v1[ncol(v1)]
+  Labels2 = as.numeric(unlist(v2[ncol(v2)]))
+  v1 = v1[,-ncol(v1)]
+  v2 = v2[,-ncol(v2)]
+  B2= 50
+  M2 = 1
+  f2 = Perform(v1,Labels,v2,Labels2,B2,M2,BC)
+  
+  #fo2 = Get_Forest(v1,Labels,B2,M2)
+  #predictions = RegClass(fo2,v2)
+}
