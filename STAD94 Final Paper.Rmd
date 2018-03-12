@@ -1,6 +1,6 @@
 ---
 title: "A Look Into The Random Forest Algorithm And It's Applications"
-author: "Daerian Dilkumar, Guan Yu Chen, Derek Frempong, Li Zong"
+author: "Daerian Dilkumar, Guan Yu Chen, Derek Frempong, Zong Li"
 date: "April 4, 2018"
 document-class: report
 header-includes:
