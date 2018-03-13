@@ -180,8 +180,8 @@ PerformRegression = function(Df, labels, Df2, labels2, num_trees, num_vars) {
   col_nam = Const[[2]]
   fo=Get_Forest(Df, labels, num_trees, num_vars)
   predictions = Regress(fo,Df2)
-  MSE = RegnAcc(predictions, labels2)
-  R2 = RegR2(predictions, labels2)
+  MSE = Accuracy(predictions, labels2)
+  R2 = RSquared(predictions, labels2)
   print("Results:")
   print (paste (c("MSE = ", MSE), collapse = ""))
   print (paste (c("R2 = ", R2), collapse = ""))
