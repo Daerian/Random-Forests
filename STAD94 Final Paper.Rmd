@@ -27,7 +27,7 @@ library(dplyr)
 
 This project was aimed at building and using an algorithm that will create predictions for classification and regression problems by using the idea of "random forests." The algorithm heavily relies on the aspect of "randomness" to reduce bias, since it attempts to randomly select sample spaces AND feature spaces from the original data, and does it hundreds of times over. The goal is to then to train a series of models and gain inputs from each, contributing to a final result. The algorithm does best at predicting the regressive variant for quantitative predictions. 
 
-A "random forest" is a collections of decision trees which each perform predictions, after which the forest will aggregate these or select a prediction which it will return. Each tree is trained over a bootstrapepd sample of the training set, with a randomly selected set of variables to create it's feature space. This means that each tree has high bias, however since the forest is intended for use with hundreds of trees, the bias in the overall forest drops significantly lower than other models for this result. 
+A "random forest" is a collections of decision trees which each perform predictions, after which the forest will aggregate these or select a prediction which it will return. Each tree is trained over a bootstrapepd sample of the   training set, with a randomly selected set of variables to create it's feature space. This means that each tree has high bias, however since the forest is intended for use with hundreds of trees, the bias in the overall forest drops significantly lower than other models for this result.
 
 
 Bootstrapping is the process by which we create a sample of the original data, which has the same sie as the original data. This is made possible because the sampling is done with replacement. Therefore the same observations can be used repeatedly, with a uniform distribution chance to be chosen.
@@ -35,12 +35,18 @@ Bootstrapping is the process by which we create a sample of the original data, w
 \section{Methodologies}
 
 The procedure is as follows:
-  - Select a number of trees for the forest, and how big the feature space is.
-  - For each tree, choose variables from the feature space, and get a bootsrap.
-  - Train the model for each tree with these variables for the given labels.
-  - Collect the trees into a forest to get them ready for predictions
+  - Select a number of trees for the forest, and how big the feature space is. 
+  $\\$
+  - For each tree, choose variables from the feature space, and get a bootsrap. 
+  $\\$
+  - Train the model for each tree with these variables for the given labels. 
+  $\\$
+  - Collect the trees into a forest to get them ready for predictions 
+  $\\$
   - Finally, given testing data, use the forest to create as many predictions are there are trees.
+  $\\$
   - Aggregate the predictions for a final prediction for each observation in the testing data.
+  $\\$
 
 
 
