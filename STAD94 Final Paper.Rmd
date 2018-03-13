@@ -35,19 +35,20 @@ Bootstrapping is the process by which we create a sample of the original data, w
 \section{Methodologies}
 
 The procedure is as follows:
-  - Select a number of trees for the forest, and how big the feature space is. 
+\begin{itemize}
+  \item Select a number of trees for the forest, and how big the feature space is. 
   $\\$
-  - For each tree, choose variables from the feature space, and get a bootsrap. 
+  \item For each tree, choose variables from the feature space, and get a bootsrap. 
   $\\$
-  - Train the model for each tree with these variables for the given labels. 
+  \item Train the model for each tree with these variables for the given labels. 
   $\\$
-  - Collect the trees into a forest to get them ready for predictions 
+  \item Collect the trees into a forest to get them ready for predictions 
   $\\$
-  - Finally, given testing data, use the forest to create as many predictions are there are trees.
+  \item Finally, given testing data, use the forest to create as many predictions are there are trees.
   $\\$
-  - Aggregate the predictions for a final prediction for each observation in the testing data.
+  \item Aggregate the predictions for a final prediction for each observation in the testing data.
   $\\$
-
+\end{itemize}
 
 
 \section{Development Process}
