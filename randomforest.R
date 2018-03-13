@@ -168,7 +168,7 @@ PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars,D
   print (paste (c("Loss = ", Loss), collapse = ""))
   print("Timings: ")
   print(proc.time() - time)
-  return (predictions)
+  return (fo)
 }
 
 # Training set, Training labels, Testing set, Testing labels, # of trees, # of params / tree

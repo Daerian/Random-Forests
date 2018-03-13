@@ -25,7 +25,7 @@ for (lib in libraries) {
 }
 
 ################################### READ AND CLEAN DATA ############################################
-###################################Wine Data#####################################################
+##################################### Wine Data ##################################################
 redWineData = read_delim("winequality-red.csv", delim = ";")
 whiteWineData = read_delim("winequality-white.csv", delim = ";")
 
@@ -43,9 +43,9 @@ names(wineData) = gsub(" ","_", names(wineData))
 wineData$quality  = as.factor(wineData$quality)
 wineData$Type = as.factor(wineData$Type)
 wineData = wineData[,-ncol(wineData)]
-##############################################################################################
+##################################################################################################
 
-##############################Breast Cancer Data######################################################
+############################## Breast Cancer Data ################################################
 #read data into
 data(BreastCancer)
 #remove Nas
@@ -120,7 +120,7 @@ BT_Tree = function(dat, labels, p, tree.print=FALSE) {
   sample.p.dat = sample(sample.dat[,-last_col], p, replace=FALSE)
   param = paste(pred_name, paste(names(sample.p.dat), collapse = " + "))
   sample.p.dat[,colnames(dat)[ncol(dat)]] = sample.dat[,last_col]
-  trees = rpart(formula=param, data=sample.p.dat, method='class')
+  trees = rpart(formula=param, data=sample.p.dat, method='regress')
   if (tree.print) {
     rpart.plot(trees)
   }
@@ -247,10 +247,12 @@ Perform = function(Df, labels, Df2, labels2, num_trees, num_vars,Data) {
   m = Const[[1]]
   col_nam = Const[[2]]
   fo=Get_Forest(Df, labels, num_trees, num_vars)
-  predictions = Classify(fo,Df2)
-  Loss = ClassLoss(predictions,labels2)
+  predictions = Regress(fo,Df2)
+  Acc = Accuracy(predictions,labels2)
+  R2 = RegR2(predictions,labels2)
   print("Results:")
-  print (paste (c("Loss = ", Loss), collapse = ""))
+  print (paste (c("Acc = ", Acc), collapse = ""))
+  print (paste (c("R2 = ", R2), collapse = ""))
   print("Timings: ")
   print(proc.time() - time)
   return (predictions)

@@ -48,11 +48,71 @@ The procedure is as follows:
   - Aggregate the predictions for a final prediction for each observation in the testing data.
   $\\$
 
-
+The libraries we used are as follows: 
+- tidyverse
+$\\$
+- dplyr
+$\\$
+- rpart
+$\\$
+- rpart.plot
+$\\$
 
 \section{Development Process}
 
-\section{Results}
+\section{Examples And Results}
+
+NOTE: We will be working with our functions and algorithms, which are stored in the file "RandomForest.R" so we will be first setting this source before we proceed.
+
+```{r, echo = FALSE}
+source("RandomForest.R")
+```
+
+\subsection{Wine Data}
+
+We will create an example using Wine Data. This data performs well using a regression model.
+The data is formatted so that the quality is the last column of the data set. We will propperly read and process the data so that we can run it through our random forest algorithm.
+To start we start at M = 1 (1 variable is chosen per tree), and B = 500 (500 trees).
+
+```{r, cache=TRUE}
+################################### READ AND CLEAN DATA #########################################
+redWineData = read_delim("winequality-red.csv", delim = ";")
+whiteWineData = read_delim("winequality-white.csv", delim = ";")
+
+# remove NA values
+redWineData = (redWineData[complete.cases(redWineData),])
+whiteWineData = (whiteWineData[complete.cases(whiteWineData),])
+# Prep Sets for merginglibrary
+redWineData = redWineData %>% mutate(Type = "Red")
+whiteWineData = whiteWineData %>% mutate (Type = "White")
+
+# Merge Data and get Final Dataset
+wineData = rbind(redWineData,whiteWineData)
+# Remove spaces from column names
+names(wineData) = gsub(" ","_", names(wineData))
+wineData$quality  = as.factor(wineData$quality)
+wineData$Type = as.factor(wineData$Type)
+wineData = wineData[,-ncol(wineData)]
+```
+
+```{r}
+################################### PREPARE AND PERFORM #########################################
+
+w1 = sample_n(wineData, nrow(wineData)/2, replace=FALSE)
+w2 = anti_join(wineData,w1)
+labels = as.numeric(unlist(w1[ncol(w1)]))
+labels2 = as.numeric(unlist(w2[ncol(w2)]))
+w1 = w1[,-ncol(w1)]
+w2 = w2[,-ncol(w2)]
+B = 500
+M = 1
+f = PerformRegression(w1,labels,w2,labels2,B,M)
+```
+The data above says that the accuracy is 
+
+Now, we try again with a higher number of variables. We find that with M = 3, the result hanges.
+
+
 
 \section{Wrap-Up}
 
