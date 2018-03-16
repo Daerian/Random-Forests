@@ -45,8 +45,8 @@ wineData$Type = as.factor(wineData$Type)
 wineData = wineData[,-ncol(wineData)]
 ##################################################################################################
 
-############################## Breast Cancer Data ################################################
-#read data into
+##############################Breast Cancer Data######################################################
+#read data 
 data(BreastCancer)
 #remove Nas
 BreastCancer = as.data.frame(na.omit(BreastCancer))
@@ -57,7 +57,7 @@ BC = BC[,-1]
 #make the class into factors if already not done
 BC[, 1:9] <- sapply(BC[, 1:9], as.numeric)
 
-
+BC = BC %>% mutate(ind = as.numeric(rownames(BC)))
 
 
 
@@ -171,7 +171,7 @@ ClassLoss = function(predicts, labels){
 
 ####################################### REGRESSION ##############################################
 
-RegClass = function(forest,obs){
+Regress = function(forest,obs){
   predictions = 0 # will add all the predictions, then divide by numTrees to get average
   numTrees = length(forest)
   obs = as.data.frame(obs)
@@ -190,19 +190,18 @@ RegClass = function(forest,obs){
 A function that calculates accuracy for regresison functions
 "
 RegnAcc = function(predicts, labels){
-  avg = mean(labels)
-  tot  = sum((predicts - labels)^2)
+  #avg = mean(labels)
+  tot  = sum((labels - predicts)^2)
   relative_tot = tot/(length(predicts) - 2)
   return (relative_tot)
 }
 
 RegR2 = function(predicts, labels){
   avg = mean(labels)
-  upper = sum((predicts - labels)^2)
-  lower = sum((labels - avg)^2)
-  r2 = upper/lower
-  R2 = 1-r2
-  return (R2)
+  upper = (sum((predicts - avg)^2))/length(predicts)
+  lower = (sum((labels - avg)^2))/length(predicts)
+  R2 = upper/lower
+  #R2 = 1-r2
 }
 "
 # REGN CLASSIFIER
@@ -268,9 +267,12 @@ B = 600
 M = 4
 pred = Perform(w1,labs,w2,labels2,B,M,wineData)
 
-
-#fo=Get_Forest(w1, labels, B, M)
-#predictions = RegClass(fo,w2)
+if(FALSE){
+#classification
+fo=Get_Forest(w1, labels, B, M)
+classpred = Classify(fo,w2)
+cMatrix = table(unname(classpred),labels2)
+cMatrix
 
 
 if (FALSE) {

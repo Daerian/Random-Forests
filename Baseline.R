@@ -114,7 +114,7 @@ BT_Tree = function(dat, labels, p, tree.print=FALSE) {
   sample.p.dat = sample(sample.dat[,-last_col], p, replace=FALSE)
   param = paste(pred_name, paste(names(sample.p.dat), collapse = " + "))
   sample.p.dat[,colnames(dat[,last_col])] = sample.dat[,last_col]
-  trees = rpart(formula=param, data=sample.p.dat, method='class')
+  trees = rpart(formula=param, data=sample.p.dat, method='anova')
   if (tree.print) {
     rpart.plot(trees)
   }
@@ -176,18 +176,18 @@ RegClass = function(forest,obs){
 A function that calculates accuracy for regresison functions
 "
 RegnAcc = function(predicts, labels){
-  avg = mean(labels)
-  tot  = sum((predicts - avg)^2)
+  #avg = mean(labels)
+  tot  = sum((labels - predicts)^2)
   relative_tot = tot/(length(predicts) - 2)
   return (relative_tot)
 }
 
 RegR2 = function(predicts, labels){
   avg = mean(labels)
-  upper = sum((predicts - avg)^2)
-  lower = sum((labels - avg)^2)
-  r2 = upper/lower
-  R2 = 1-r2
+  upper = (sum((predicts - avg)^2))/length(predicts)
+  lower = (sum((labels - avg)^2))/length(predicts)
+  R2 = upper/lower
+  #R2 = 1-r2
   return (R2)
 }
 "
@@ -248,8 +248,8 @@ w1 = sample_n(wineData, nrow(wineData)/2, replace=FALSE)
 w2 = anti_join(wineData,w1)
 labels = as.numeric(unlist(w1[ncol(w1)]))
 labels2 = as.numeric(unlist(w2[ncol(w2)]))
-w1 = w1[,-w1[ncol(w1)]]
-w2 = w2[,-w1[ncol(w2)]]
+w1 = w1[,-ncol(w1)]
+w2 = w2[,-ncol(w2)]
 B = 500
-M = 2
+M = 4
 f = Perform(w1,labels,w2,labels2,B,M)
