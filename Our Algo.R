@@ -25,7 +25,7 @@ for (lib in libraries) {
 }
 
 ################################### READ AND CLEAN DATA ############################################
-###################################Wine Data#####################################################
+##################################### Wine Data ##################################################
 redWineData = read_delim("winequality-red.csv", delim = ";")
 whiteWineData = read_delim("winequality-white.csv", delim = ";")
 
@@ -43,7 +43,7 @@ names(wineData) = gsub(" ","_", names(wineData))
 wineData$quality  = as.factor(wineData$quality)
 wineData$Type = as.factor(wineData$Type)
 wineData = wineData[,-ncol(wineData)]
-##############################################################################################
+##################################################################################################
 
 ##############################Breast Cancer Data######################################################
 #read data 
@@ -120,7 +120,7 @@ BT_Tree = function(dat, labels, p, tree.print=FALSE) {
   sample.p.dat = sample(sample.dat[,-last_col], p, replace=FALSE)
   param = paste(pred_name, paste(names(sample.p.dat), collapse = " + "))
   sample.p.dat[,colnames(dat)[ncol(dat)]] = sample.dat[,last_col]
-  trees = rpart(formula=param, data=sample.p.dat, method='class')
+  trees = rpart(formula=param, data=sample.p.dat, method='regress')
   if (tree.print) {
     rpart.plot(trees)
   }
@@ -247,10 +247,10 @@ Perform = function(Df, labels, Df2, labels2, num_trees, num_vars,Data) {
   col_nam = Const[[2]]
   fo=Get_Forest(Df, labels, num_trees, num_vars)
   predictions = Regress(fo,Df2)
-  MSE = RegnAcc(predictions, labels2)
-  R2 = RegR2(predictions, labels2)
+  Acc = Accuracy(predictions,labels2)
+  R2 = RegR2(predictions,labels2)
   print("Results:")
-  print (paste (c("MSE = ", MSE), collapse = ""))
+  print (paste (c("Acc = ", Acc), collapse = ""))
   print (paste (c("R2 = ", R2), collapse = ""))
   print("Timings: ")
   print(proc.time() - time)
@@ -259,13 +259,13 @@ Perform = function(Df, labels, Df2, labels2, num_trees, num_vars,Data) {
 
 w1 = sample_n(wineData, nrow(wineData)/2, replace=FALSE)
 w2 = anti_join(wineData,w1)
-labels = w1[ncol(w1)]
+labs = w1[ncol(w1)]
 labels2 = as.numeric(unlist(w2[ncol(w2)]))
 w1 = w1[,-ncol(w1)]
 w2 = w2[,-ncol(w2)]
-B = 500
+B = 600
 M = 4
-pred = Perform(w1,labels,w2,labels2,B,M,wineData)
+pred = Perform(w1,labs,w2,labels2,B,M,wineData)
 
 if(FALSE){
 #classification
@@ -275,29 +275,17 @@ cMatrix = table(unname(classpred),labels2)
 cMatrix
 
 
-
-
-#BC = distinct(BC)
-v1 = sample_n(BC, nrow(BC)/2, replace=FALSE)
-v2 = anti_join(BC,v1, by=colnames(BC))
-v1 = v1[,-ncol(v1)]
-v2 = v2[,-ncol(v2)]
-Labels = v1[ncol(v1)]
-Labels2 = as.numeric(unlist(v2[ncol(v2)]))
-v1 = v1[,-ncol(v1)]
-v2 = v2[,-ncol(v2)]
-B2= 600
-M2 = 4
-f2 = Perform(v1,Labels,v2,Labels2,B2,M2,BC)
-
-
-
-fo2 = Get_Forest(v1,Labels,B2,M2)
-classpred2 = Classify(fo2,v2)
-cMatrix = table(unname(classpred2),Labels2)
-cMatrix
-ClassLoss(unname(classpred2),Labels2)
-
-
+if (FALSE) {
+  v1 = sample_n(BC, nrow(BC)/2, replace=FALSE)
+  v2 = anti_join(BC,v1)
+  Labels = v1[ncol(v1)]
+  Labels2 = as.numeric(unlist(v2[ncol(v2)]))
+  v1 = v1[,-ncol(v1)]
+  v2 = v2[,-ncol(v2)]
+  B2= 50
+  M2 = 1
+  f2 = Perform(v1,Labels,v2,Labels2,B2,M2,BC)
+  
+  #fo2 = Get_Forest(v1,Labels,B2,M2)
+  #predictions = RegClass(fo2,v2)
 }
-
