@@ -190,19 +190,18 @@ Regress = function(forest,obs){
 A function that calculates accuracy for regresison functions
 "
 RegnAcc = function(predicts, labels){
-  avg = mean(labels)
-  tot  = sum((predicts - labels)^2)
+  #avg = mean(labels)
+  tot  = sum((labels - predicts)^2)
   relative_tot = tot/(length(predicts) - 2)
   return (relative_tot)
 }
 
 RegR2 = function(predicts, labels){
   avg = mean(labels)
-  upper = sum((predicts - labels)^2)
-  lower = sum((labels - avg)^2)
-  r2 = upper/lower
-  R2 = 1-r2
-  return (R2)
+  upper = (sum((predicts - avg)^2))/length(predicts)
+  lower = (sum((labels - avg)^2))/length(predicts)
+  R2 = upper/lower
+  #R2 = 1-r2
 }
 "
 # REGN CLASSIFIER
@@ -268,6 +267,7 @@ B = 500
 M = 4
 pred = Perform(w1,labels,w2,labels2,B,M,wineData)
 
+if(FALSE){
 #classification
 fo=Get_Forest(w1, labels, B, M)
 classpred = Classify(fo,w2)
@@ -299,5 +299,5 @@ cMatrix
 ClassLoss(unname(classpred2),Labels2)
 
 
-
+}
 
