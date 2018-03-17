@@ -158,18 +158,20 @@ Classify = function(forest, obs){
   i = 0
   # This for loop will add the predictions of every tree together, so they can be aggregated
   for (i in 1:numTrees){
-    predictions = predictions + rpart::predict(forest[[i]][[1]], obs, type = "class")
+    predictions = predictions + predict(forest[[i]][[1]], obs, type = "class")
   }
   predictions = predictions/numTrees
+  round(predictions)
   return (predictions)
 }
 
-ClassLoss = function(predicts, labels){
+Loss = function(predicts, labels){
   loss =  1 - as.numeric(predicts == labels)
   error = sum(loss) / length(labels)
   table(predicts,labels)
   return (error)
 }
+
 
 ####################################### REGRESSION ##############################################
 
@@ -259,26 +261,43 @@ Perform = function(Df, labels, Df2, labels2, num_trees, num_vars,Data) {
   return (predictions)
 }
 
-w1 = sample_n(wineData, nrow(wineData)/2, replace=FALSE)
-w2 = anti_join(wineData,w1)
-labs = w1[ncol(w1)]
-labels2 = as.numeric(unlist(w2[ncol(w2)]))
-w1 = w1[,-ncol(w1)]
-w2 = w2[,-ncol(w2)]
-B = 600
-M = 4
-pred = Perform(w1,labs,w2,labels2,B,M,wineData)
 
-if(FALSE){
-#classification
-fo=Get_Forest(w1, labels, B, M)
-classpred = Classify(fo,w2)
-cMatrix = table(unname(classpred),labels2)
-cMatrix
+# Training set, Training labels, Testing set, Testing labels, # of trees, # of params / tree
+PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars,Data) {
+  # Set Constants
+  time = proc.time()
+  Const = Constant_Set(Data)
+  m = Const[[1]]
+  col_nam = Const[[2]]
+  fo=Get_Forest(Df, labels, num_trees, num_vars)
+  predictions = Classify(fo,Df2)
+  Loss = Loss(predictions,labels2)
+  print("Results:")
+  print (paste (c("Loss = ", Loss), collapse = ""))
+  print("Timings: ")
+  print(proc.time() - time)
+  return (fo)
 }
 
 
-if (FALSE) {
+if(FALSE){
+  w1 = sample_n(wineData, nrow(wineData)/2, replace=FALSE)
+  w2 = anti_join(wineData,w1)
+  labs = w1[ncol(w1)]
+  labels2 = as.numeric(unlist(w2[ncol(w2)]))
+  w1 = w1[,-ncol(w1)]
+  w2 = w2[,-ncol(w2)]
+  B = 600
+  M = 4
+  pred = Perform(w1,labs,w2,labels2,B,M,wineData)
+
+
+  #classification
+  fo=Get_Forest(w1, labels, B, M)
+  classpred = Classify(fo,w2)
+  cMatrix = table(unname(classpred),labels2)
+  cMatrix
+
   v1 = sample_n(BC, nrow(BC)/2, replace=FALSE)
   v2 = anti_join(BC,v1)
   Labels = v1[ncol(v1)]
@@ -293,3 +312,15 @@ if (FALSE) {
   #predictions = RegClass(fo2,v2)
   
 }
+
+
+training_set2 = sample_n(BreastCancer, nrow(BreastCancer)/2, replace=FALSE)
+testing_set2 = anti_join(BreastCancer,training_set2)
+labelsBC = as.factor(unlist(training_set2[ncol(training_set2)]))#training_set labels
+labelsBC2 = as.factor(unlist(testing_set2[ncol(testing_set2)]))# testing_set Labels
+training_set2 = training_set2[,-ncol(training_set2)] #getting rid of the labels to  prepare
+# toperform classification
+testing_set2 = testing_set2[,-ncol(testing_set2)]
+B2 = 500
+M2 = 1
+f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,BreastCancer)
