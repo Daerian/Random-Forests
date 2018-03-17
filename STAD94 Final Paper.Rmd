@@ -27,10 +27,10 @@ library(dplyr)
 
 This project was aimed at building and using an algorithm that will create predictions for classification and regression problems by using the idea of "random forests." The algorithm heavily relies on the aspect of "randomness" to reduce bias, since it attempts to randomly select sample spaces AND feature spaces from the original data, and does it hundreds of times over. The goal is to then to train a series of models and gain inputs from each, contributing to a final result. The algorithm does best at predicting the regressive variant for quantitative predictions. 
 
-A "random forest" is a collections of decision trees which each perform predictions, after which the forest will aggregate these or select a prediction which it will return. Each tree is trained over a bootstrapepd sample of the   training set, with a randomly selected set of variables to create it's feature space. This means that each tree has high bias, however since the forest is intended for use with hundreds of trees, the bias in the overall forest drops significantly lower than other models for this result.
+A "random forest" is a collections of decision trees which each perform predictions, after which the forest will aggregate these or select a prediction which it will return. Each tree is trained over a bootstrapped sample of the   training set, with a randomly selected set of variables to create it's feature space. This means that each tree has high bias, however since the forest is intended for use with hundreds of trees, the bias in the overall forest drops significantly lower than other models for this result.
 
 
-Bootstrapping is the process by which we create a sample of the original data, which has the same sie as the original data. This is made possible because the sampling is done with replacement. Therefore the same observations can be used repeatedly, with a uniform distribution chance to be chosen.
+Bootstrapping is the process by which we create a sample of the original data, which has the same size as the original data. This is made possible because the sampling is done with replacement. Therefore the same observations can be used repeatedly, with a uniform distribution chance to be chosen.
 
 \section{Methodologies}
 
@@ -38,7 +38,7 @@ The procedure is as follows:
 \begin{itemize}
   \item Select a number of trees for the forest, and how big the feature space is. 
   $\\$
-  \item For each tree, choose variables from the feature space, and get a bootsrap. 
+  \item For each tree, choose variables from the feature space, and get a bootstrap. 
   $\\$
   \item Train the model for each tree with these variables for the given labels. 
   $\\$
@@ -73,7 +73,7 @@ source("randomforest.R")
 \subsection{Wine Data}
 
 We will create an example using Wine Data. This data performs well using a regression model.
-The data is formatted so that the quality is the last column of the data set. We will propperly read and process the data so that we can run it through our random forest algorithm.
+The data is formatted so that the quality is the last column of the data set. We will properly read and process the data so that we can run it through our random forest algorithm.
 To start we start at M = 1 (1 variable is chosen per tree), and B = 500 (500 trees).
 
 ```{r, cache=TRUE}
@@ -112,7 +112,7 @@ f = PerformRegression(w1,labels,w2,labels2,B,M)
 ```
 The data above says that the accuracy is 
 
-Now, we try again with a higher number of variables. We find that with M = 3, the result hanges.
+Now, we try again with a higher number of variables. We find that with M = 3, the result changes.
 
 
 
