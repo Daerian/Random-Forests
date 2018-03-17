@@ -48,7 +48,6 @@ The procedure is as follows:
   $\\$
   \item Aggregate the predictions for a final prediction for each observation in the testing data.
   $\\$
-<<<<<<< HEAD
 
 The libraries we used are as follows: 
 - tidyverse
@@ -59,10 +58,7 @@ $\\$
 $\\$
 - rpart.plot
 $\\$
-=======
 \end{itemize}
-
->>>>>>> 1c1ff82aa8a59d5e0270392244c03bcb53f1e473
 
 \section{Development Process}
 
@@ -71,7 +67,7 @@ $\\$
 NOTE: We will be working with our functions and algorithms, which are stored in the file "RandomForest.R" so we will be first setting this source before we proceed.
 
 ```{r, echo = FALSE}
-source("RandomForest.R")
+source("randomforest.R")
 ```
 
 \subsection{Wine Data}

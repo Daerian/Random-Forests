@@ -5,17 +5,17 @@ rm(list = ls())
 All required libraries to the 'libraries' vector of strings below. All libraries in the
 vector of strings will be installed and/or loaded on runtime if not already installed/loaded.
 "
-libraries = c('tidyverse','rpart','rpart.plot','robustbase','dplyr', 'dbplyr', 'AppliedPredictiveModeling',
-              'datasets','mlbench')
-
-for (lib in libraries) {
-  if (!require(lib, character.only = TRUE)) {
-    install.packages(lib)
-    library(lib, character.only = TRUE)
-  } else if (!(lib %in% (.packages()))){
-    library(lib, character.only = TRUE)
-  }
-}
+# libraries = c('tidyverse','rpart','rpart.plot','robustbase','dplyr', 'dbplyr', 'AppliedPredictiveModeling',
+#               'datasets','mlbench')
+# 
+# for (lib in libraries) {
+#   if (!require(lib, character.only = TRUE)) {
+#     install.packages(lib)
+#     library(lib, character.only = TRUE)
+#   } else if (!(lib %in% (.packages()))){
+#     library(lib, character.only = TRUE)
+#   }
+# }
 
 ######################################### CONSTANTS #############################################
 
