@@ -110,6 +110,7 @@ Classify = function(forest, obs){
 Loss = function(predicts, labels){
   loss =  1 - as.numeric(predicts == labels)
   error = sum(loss) / length(labels)
+  table(predicts,labels)
   return (error)
 }
 

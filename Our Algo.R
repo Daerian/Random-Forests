@@ -120,7 +120,7 @@ BT_Tree = function(dat, labels, p, tree.print=FALSE) {
   sample.p.dat = sample(sample.dat[,-last_col], p, replace=FALSE)
   param = paste(pred_name, paste(names(sample.p.dat), collapse = " + "))
   sample.p.dat[,colnames(dat)[ncol(dat)]] = sample.dat[,last_col]
-  trees = rpart(formula=param, data=sample.p.dat, method='regress')
+  trees = rpart(formula=param, data=sample.p.dat, method='anova')
   if (tree.print) {
     rpart.plot(trees)
   }
@@ -166,6 +166,7 @@ Classify = function(forest, obs){
 ClassLoss = function(predicts, labels){
   loss =  1 - as.numeric(predicts == labels)
   error = sum(loss) / length(labels)
+  table(predicts,labels)
   return (error)
 }
 
@@ -189,7 +190,7 @@ Regress = function(forest,obs){
 "
 A function that calculates accuracy for regresison functions
 "
-RegnAcc = function(predicts, labels){
+Accuracy = function(predicts, labels){
   #avg = mean(labels)
   tot  = sum((labels - predicts)^2)
   relative_tot = tot/(length(predicts) - 2)
@@ -273,6 +274,7 @@ fo=Get_Forest(w1, labels, B, M)
 classpred = Classify(fo,w2)
 cMatrix = table(unname(classpred),labels2)
 cMatrix
+}
 
 
 if (FALSE) {
@@ -288,4 +290,5 @@ if (FALSE) {
   
   #fo2 = Get_Forest(v1,Labels,B2,M2)
   #predictions = RegClass(fo2,v2)
+  
 }
