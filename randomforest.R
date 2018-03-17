@@ -102,8 +102,10 @@ Classify = function(forest, obs){
   i = 0
   # This for loop will add the predictions of every tree together, so they can be aggregated
   for (i in 1:numTrees){
-    predictions = predict(forest[[i]][[1]], obs, type = "class")
+    predictions = predictions + predict(forest[[i]][[1]], obs, type = "vector")
   }
+  predictions = predictions/numTrees
+  round(predictions)
   return (predictions)
 }
 
@@ -143,7 +145,7 @@ Accuracy = function(predicts, labels){
 
 RSquared = function(predicts, labels){
   avg = mean(labels)
-  upper = sum((predict - avg)^2)
+  upper = sum((predicts - avg)^2)
   lower = sum((labels - avg)^2)
   R2 = upper/lower
   return (R2)

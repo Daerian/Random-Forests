@@ -12,10 +12,6 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(tidyverse)
-library(rpart)
-library(rpart.plot)
-library(dplyr)
 ```
 
 \newpage
@@ -60,6 +56,10 @@ The libraries we used are as follows:
 
 ```{r, echo = FALSE}
 source("randomforest.R")
+library(dplyr)
+library(tidyverse)
+library(rpart)
+library(rpart.plot)
 ```
 
 \subsection{Wine Data}
@@ -129,8 +129,8 @@ Now that we have the data we can then perform Classification on it and see how i
 ```{r BC perform}
 training_set2 = sample_n(BreastCancer, nrow(BreastCancer)/2, replace=FALSE)
 testing_set2 = anti_join(BreastCancer,training_set2)
-labelsBC = as.numeric(unlist(training_set2[ncol(training_set2)]))#training_set labels
-labelsBC2 = as.numeric(unlist(testing_set2[ncol(testing_set2)]))# testing_set Labels
+labelsBC = as.factor(unlist(training_set2[ncol(training_set2)]))#training_set labels
+labelsBC2 = as.factor(unlist(testing_set2[ncol(testing_set2)]))# testing_set Labels
 training_set2 = training_set2[,-ncol(training_set2)] #getting rid of the labels to  prepare
 # toperform classification
 testing_set2 = testing_set2[,-ncol(testing_set2)]
