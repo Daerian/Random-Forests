@@ -47,15 +47,16 @@ wineData = wineData[,-ncol(wineData)]
 
 ##############################Breast Cancer Data######################################################
 #read data 
-data(BreastCancer)
+
 #remove Nas
 BreastCancer = as.data.frame(na.omit(BreastCancer))
 #change the benign to 0 and malignant to 1 for the classes
 BC=within(BreastCancer, Class <- factor(Class, labels = c(0,1)))
 #get rid of the id
 BC = BC[,-1]
+BC$id = NULL
 #make the class into factors if already not done
-BC[, 1:9] <- sapply(BC[, 1:9], as.numeric)
+BC[, 1:ncol(BC)] <- sapply(BC[, 1:ncol(BC)], as.numeric)
 
 BC = BC %>% mutate(ind = as.numeric(rownames(BC)))
 
@@ -120,7 +121,7 @@ BT_Tree = function(dat, labels, p, tree.print=FALSE) {
   sample.p.dat = sample(sample.dat[,-last_col], p, replace=FALSE)
   param = paste(pred_name, paste(names(sample.p.dat), collapse = " + "))
   sample.p.dat[,colnames(dat)[ncol(dat)]] = sample.dat[,last_col]
-  trees = rpart(formula=param, data=sample.p.dat, method='anova')
+  trees = rpart(formula=param, data=sample.p.dat)
   if (tree.print) {
     rpart.plot(trees)
   }
@@ -314,8 +315,8 @@ if(FALSE){
 }
 
 
-training_set2 = sample_n(BreastCancer, nrow(BreastCancer)/2, replace=FALSE)
-testing_set2 = anti_join(BreastCancer,training_set2)
+training_set2 = sample_n(BC, nrow(BC)/2, replace=FALSE)
+testing_set2 = anti_join(BC,training_set2)
 labelsBC = as.factor(unlist(training_set2[ncol(training_set2)]))#training_set labels
 labelsBC2 = as.factor(unlist(testing_set2[ncol(testing_set2)]))# testing_set Labels
 training_set2 = training_set2[,-ncol(training_set2)] #getting rid of the labels to  prepare
