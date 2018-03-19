@@ -10,7 +10,7 @@ libraries = c('tidyverse','rpart','rpart.plot','robustbase','dplyr', 'dbplyr', '
 
 for (lib in libraries) {
   if (!require(lib, character.only = TRUE)) {
-    install.packages(lib)
+    install.packages(lib, repos="https://cloud.r-project.org")
     library(lib, character.only = TRUE)
   } else if (!(lib %in% (.packages()))){
     library(lib, character.only = TRUE)
