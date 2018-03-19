@@ -120,7 +120,7 @@ BT_Tree = function(dat, labels, p, tree.print=FALSE) {
   sample.p.dat = sample(sample.dat[,-last_col], p, replace=FALSE)
   param = paste(pred_name, paste(names(sample.p.dat), collapse = " + "))
   sample.p.dat[,colnames(dat)[ncol(dat)]] = sample.dat[,last_col]
-  trees = rpart(formula=param, data=sample.p.dat, method='anova')
+  trees = rpart(formula=param, data=sample.p.dat)
   if (tree.print) {
     rpart.plot(trees)
   }
@@ -202,8 +202,8 @@ Accuracy = function(predicts, labels){
 
 RegR2 = function(predicts, labels){
   avg = mean(labels)
-  upper = (sum((predicts - avg)^2))/length(predicts)
-  lower = (sum((labels - avg)^2))/length(predicts)
+  upper = (sum((predicts - avg)^2))
+  lower = (sum((labels - avg)^2))
   R2 = upper/lower
   #R2 = 1-r2
 }
@@ -280,6 +280,26 @@ PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars,D
 }
 
 
+
+training_set = sample_n(wineData, nrow(wineData)/2, replace=FALSE)
+testing_set = anti_join(wineData,training_set)
+
+# labels for the training set
+training_labels = as.numeric(unlist(training_set[ncol(training_set)]))
+
+# labels for the testing set
+testing_labels = as.numeric(unlist(testing_set[ncol(testing_set)]))
+
+training_set = training_set[,-ncol(training_set)]
+testing_set = testing_set[,-ncol(testing_set)]
+
+# this is the number of trees we want to create
+B = 500
+
+# this is the number of variables we want to use
+M = 1   
+f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M)
+
 if(FALSE){
   w1 = sample_n(wineData, nrow(wineData)/2, replace=FALSE)
   w2 = anti_join(wineData,w1)
@@ -313,14 +333,15 @@ if(FALSE){
   
 }
 
-
-training_set2 = sample_n(BreastCancer, nrow(BreastCancer)/2, replace=FALSE)
-testing_set2 = anti_join(BreastCancer,training_set2)
-labelsBC = as.factor(unlist(training_set2[ncol(training_set2)]))#training_set labels
-labelsBC2 = as.factor(unlist(testing_set2[ncol(testing_set2)]))# testing_set Labels
-training_set2 = training_set2[,-ncol(training_set2)] #getting rid of the labels to  prepare
-# toperform classification
-testing_set2 = testing_set2[,-ncol(testing_set2)]
-B2 = 500
-M2 = 1
-f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,BreastCancer)
+if(FALSE){
+  training_set2 = sample_n(BC, nrow(BC)/2, replace=FALSE)
+  testing_set2 = anti_join(BC,training_set2)
+  labelsBC = as.factor(unlist(training_set2[ncol(training_set2)]))#training_set labels
+  labelsBC2 = as.factor(unlist(testing_set2[ncol(testing_set2)]))# testing_set Labels
+  training_set2 = training_set2[,-ncol(training_set2)] #getting rid of the labels to  prepare
+  # toperform classification
+  testing_set2 = testing_set2[,-ncol(testing_set2)]
+  B2 = 500
+  M2 = 1
+  f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,BreastCancer)
+}

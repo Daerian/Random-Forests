@@ -5,17 +5,17 @@ rm(list = ls())
 All required libraries to the 'libraries' vector of strings below. All libraries in the
 vector of strings will be installed and/or loaded on runtime if not already installed/loaded.
 "
-# libraries = c('tidyverse','rpart','rpart.plot','robustbase','dplyr', 'dbplyr', 'AppliedPredictiveModeling',
-#               'datasets','mlbench')
-# 
-# for (lib in libraries) {
-#   if (!require(lib, character.only = TRUE)) {
-#     install.packages(lib)
-#     library(lib, character.only = TRUE)
-#   } else if (!(lib %in% (.packages()))){
-#     library(lib, character.only = TRUE)
-#   }
-# }
+libraries = c('tidyverse','rpart','rpart.plot','robustbase','dplyr', 'dbplyr', 'AppliedPredictiveModeling',
+              'datasets','mlbench')
+
+for (lib in libraries) {
+  if (!require(lib, character.only = TRUE)) {
+    install.packages(lib)
+    library(lib, character.only = TRUE)
+  } else if (!(lib %in% (.packages()))){
+    library(lib, character.only = TRUE)
+  }
+}
 
 ######################################### CONSTANTS #############################################
 
@@ -64,7 +64,7 @@ BT_Tree = function(dat, labels, p, tree.print=FALSE) {
   sample.p.dat = sample(sample.dat[,-last_col], p, replace=FALSE)
   param = paste(pred_name, paste(names(sample.p.dat), collapse = " + "))
   sample.p.dat[,colnames(dat)[ncol(dat)]] = sample.dat[,last_col]
-  trees = rpart(formula=param, data=sample.p.dat, method='class')
+  trees = rpart(formula=param, data=sample.p.dat)
   if (tree.print) {
     rpart.plot(trees)
   }
@@ -102,17 +102,14 @@ Classify = function(forest, obs){
   i = 0
   # This for loop will add the predictions of every tree together, so they can be aggregated
   for (i in 1:numTrees){
-    predictions = predictions + predict(forest[[i]][[1]], obs, type = "vector")
+    predictions = predict(forest[[i]][[1]], obs, type = "class")
   }
-  predictions = predictions/numTrees
-  round(predictions)
   return (predictions)
 }
 
 Loss = function(predicts, labels){
   loss =  1 - as.numeric(predicts == labels)
   error = sum(loss) / length(labels)
-  table(predicts,labels)
   return (error)
 }
 
@@ -138,7 +135,8 @@ Regress = function(forest,obs){
 A function that calculates accuracy for regresison functions
 "
 Accuracy = function(predicts, labels){
-  tot  = sum((labels - predicts)^2)
+  avg = mean(labels)
+  tot  = sum((predicts - labels)^2)
   relative_tot = tot/(length(predicts) - 2)
   return (relative_tot)
 }
@@ -147,7 +145,8 @@ RSquared = function(predicts, labels){
   avg = mean(labels)
   upper = sum((predicts - avg)^2)
   lower = sum((labels - avg)^2)
-  R2 = upper/lower
+  r2 = upper/lower
+  R2 = 1-r2
   return (R2)
 }
 
@@ -176,7 +175,7 @@ PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars,D
 PerformRegression = function(Df, labels, Df2, labels2, num_trees, num_vars) {
   # Set Constants
   time = proc.time()
-  Const = Constant_Set(wineData)
+  Const = Constant_Set(Df)
   m = Const[[1]]
   col_nam = Const[[2]]
   fo=Get_Forest(Df, labels, num_trees, num_vars)
