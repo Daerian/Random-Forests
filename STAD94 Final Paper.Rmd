@@ -122,7 +122,6 @@ Heres another example, but instead we will do classification on this dataset rat
 
 ```{r BC read, cache=TRUE, message=FALSE, warning=FALSE}
 BreastCancer = read.table("BreastCancer.csv",header=T, sep=",")
-
 ```
 Now that we have the data we can then perform Classification on it and see how it fares.
 

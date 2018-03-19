@@ -64,7 +64,7 @@ BT_Tree = function(dat, labels, p, tree.print=FALSE) {
   sample.p.dat = sample(sample.dat[,-last_col], p, replace=FALSE)
   param = paste(pred_name, paste(names(sample.p.dat), collapse = " + "))
   sample.p.dat[,colnames(dat)[ncol(dat)]] = sample.dat[,last_col]
-  trees = rpart(formula=param, data=sample.p.dat, method='anova')
+  trees = rpart(formula=param, data=sample.p.dat, method='class')
   if (tree.print) {
     rpart.plot(trees)
   }
