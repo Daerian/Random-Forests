@@ -54,7 +54,7 @@ The libraries we used are as follows:
 
 \textsc{Note:} We will be working with our functions and algorithms, which are stored in the file \texttt{RandomForest.R} so we will be first setting this source before we proceed.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 source("randomforest.R")
 library(dplyr)
 library(tidyverse)
