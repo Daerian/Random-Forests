@@ -57,7 +57,7 @@ bt.return[[2]]
 bt.return[[3]]
 "
 BT_Tree = function(dat, labels, p, tree.print=FALSE) {
-  dat[,colnames(labels)] = labels
+  dat = cbind(dat, labels)
   last_col = ncol(dat)
   pred_name = paste(colnames(dat)[ncol(dat)],paste(" ~"))
   sample.dat = sample_n(dat, nrow(dat), replace=TRUE)
@@ -74,7 +74,6 @@ BT_Tree = function(dat, labels, p, tree.print=FALSE) {
   ret[[3]] = trees[["variable.importance"]]
   return(ret)
 }
-
 
 # Returns a forest
 Get_Forest = function(dat, labels, B, p){
@@ -142,9 +141,9 @@ Accuracy = function(predicts, labels){
 
 RSquared = function(predicts, labels){
   avg = mean(labels)
-  upper = sum((predicts - avg)^2)
+  upper = sum((labels - predicts)^2)
   lower = sum((labels - avg)^2)
-  R2 = upper/lower
+  R2 = 1-(upper/lower)
   return (R2)
 }
 
@@ -185,5 +184,5 @@ PerformRegression = function(Df, labels, Df2, labels2, num_trees, num_vars) {
   print (paste (c("R2 = ", R2), collapse = ""))
   print("Timings: ")
   print(proc.time() - time)
-  return (fo)
+  return (list(fo, R2))
 }
