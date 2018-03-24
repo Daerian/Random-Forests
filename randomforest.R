@@ -57,7 +57,12 @@ bt.return[[2]]
 bt.return[[3]]
 "
 BT_Tree = function(dat, labels, p, tree.print=FALSE) {
+<<<<<<< HEAD
+  dat = dat %>% mutate(lab = labels)
+  #dat[,colnames(labels)] = labels
+=======
   dat = cbind(dat, labels)
+>>>>>>> 2aaddabfae32700856e934c1e30aee806e19e4bb
   last_col = ncol(dat)
   pred_name = paste(colnames(dat)[ncol(dat)],paste(" ~"))
   sample.dat = sample_n(dat, nrow(dat), replace=TRUE)
