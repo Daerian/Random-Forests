@@ -1,3 +1,4 @@
+set.seed(123)
 ################################# LIBRARIES AND MISCELLANEOUS ######################################
 rm(list = ls())
 
@@ -156,9 +157,9 @@ RSquared = function(predicts, labels){
 PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars,Data) {
   # Set Constants
   time = proc.time()
-  Const = Constant_Set(Data)
-  m = Const[[1]]
-  col_nam = Const[[2]]
+  #Const = Constant_Set(data)
+ # m = Const[[1]]
+  #col_nam = Const[[2]]
   fo=Get_Forest(Df, labels, num_trees, num_vars)
   predictions = Classify(fo,Df2)
   Loss = Loss(predictions,labels2)
@@ -226,7 +227,20 @@ B = 500
 
 # this is the number of variables we want to use
 M = 1   
-f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M)
+#f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M)
 
 
+#breastcancer
+
+BreastCancer = read.table("BreastCancer.csv",header=T, sep=",")
+training_set2 = sample_n(BreastCancer, nrow(BreastCancer)*0.75, replace=FALSE)
+testing_set2 = anti_join(BreastCancer,training_set2)
+labelsBC = as.factor(unlist(training_set2[ncol(training_set2)]))#training_set labels
+labelsBC2 = as.factor(unlist(testing_set2[ncol(testing_set2)]))# testing_set Labels
+training_set2 = training_set2[,-ncol(training_set2)] #getting rid of the labels to  prepare
+# toperform classification
+testing_set2 = testing_set2[,-ncol(testing_set2)]
+B2 = 500
+M2 = 3
+f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,BreastCancer)
 
