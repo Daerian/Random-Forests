@@ -10,7 +10,7 @@ libraries = c('tidyverse','rpart','rpart.plot','robustbase','dplyr', 'dbplyr', '
 
 for (lib in libraries) {
   if (!require(lib, character.only = TRUE)) {
-    install.packages(lib)
+    install.packages(lib, repos="https://cloud.r-project.org")
     library(lib, character.only = TRUE)
   } else if (!(lib %in% (.packages()))){
     library(lib, character.only = TRUE)
@@ -57,7 +57,8 @@ bt.return[[2]]
 bt.return[[3]]
 "
 BT_Tree = function(dat, labels, p, tree.print=FALSE) {
-  dat[,colnames(labels)] = labels
+  dat = dat %>% mutate(lab = labels)
+  #dat[,colnames(labels)] = labels
   last_col = ncol(dat)
   pred_name = paste(colnames(dat)[ncol(dat)],paste(" ~"))
   sample.dat = sample_n(dat, nrow(dat), replace=TRUE)
@@ -102,7 +103,7 @@ Classify = function(forest, obs){
   i = 0
   # This for loop will add the predictions of every tree together, so they can be aggregated
   for (i in 1:numTrees){
-    predictions = predict(forest[[i]][[1]], obs, type = "class")
+    predictions = predict(forest[[i]][[1]], obs)
   }
   return (predictions)
 }
@@ -123,7 +124,7 @@ Regress = function(forest,obs){
   i = 0
   #This for loop will add the predictions of every tree together, so they can be aggregated
   for (i in 1:numTrees){
-    predictions = predictions + predict(forest[[i]][[1]], obs, type = "vector")
+    predictions = predictions + predict(forest[[i]][[1]], obs)
   }
   
   predictions = predictions/numTrees
@@ -136,7 +137,7 @@ A function that calculates accuracy for regresison functions
 "
 Accuracy = function(predicts, labels){
   tot  = sum((predicts - labels)^2)
-  relative_tot = tot/(length(predicts))
+  relative_tot = tot/(length(predicts) - 2)
   return (relative_tot)
 }
 
@@ -173,7 +174,7 @@ PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars,D
 PerformRegression = function(Df, labels, Df2, labels2, num_trees, num_vars) {
   # Set Constants
   time = proc.time()
-  Const = Constant_Set(wineData)
+  Const = Constant_Set(Df)
   m = Const[[1]]
   col_nam = Const[[2]]
   fo=Get_Forest(Df, labels, num_trees, num_vars)
@@ -187,6 +188,7 @@ PerformRegression = function(Df, labels, Df2, labels2, num_trees, num_vars) {
   print(proc.time() - time)
   return (fo)
 }
+
 
 # Read red wine and white wine data from their respective filess
 redWineData = read_delim("winequality-red.csv", delim = ";")
@@ -222,11 +224,8 @@ training_set = training_set[,-ncol(training_set)]
 testing_set = testing_set[,-ncol(testing_set)]
 
 # this is the number of trees we want to create
-B = 500
+B = 5
 
 # this is the number of variables we want to use
-M = 1   
+M = 2  
 f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M)
-
-
-
