@@ -142,7 +142,7 @@ M = 5
 f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M)
 ```
 
-One of the reasons that the $R^2$ is low could be the distribution of the data we want to classify. Let's take a closer look at the labels that the Random Forest algorithm was trying to classify.
+We can see an improvement in $R^2$ and MSE, but $R^2$ is still very low. One of the reasons that the $R^2$ is low could be the distribution of the data we want to classify. Let's take a closer look at the labels that the Random Forest algorithm was trying to classify.
 ```{r}
 hist(as.numeric(wineData$quality), xlab="Wine Quality Labels", 
      main="Histogram of Wine Quality Labels")
