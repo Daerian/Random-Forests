@@ -49,6 +49,9 @@ The libraries we used are as follows:
 \end{itemize}
 
 \section{Development Process}
+Let us begin with why our team decided to go with Random Forest. Daerian and Derek went to a datafest around May 2017 and several of the winning teams used random forests in their analysis of the data they were working on. So inspired by the studentsat the datafest, we decided to learn about Random Forests, and ultimately implement the algorithm in R on various datasets and see how it fares.
+
+We mainly used the "Elements of Statistical Learning" and "Introduction of Statistical learning with Applications in R"(Referenced at bottom). Before we even got into random forest we needed to learn about the parts of randomforests needed for it to work. So just to know what random forests are, Random forests use an amalgamation of bootstrapped decision trees that sample (without replacement) the predictors to reduce bias and increase variance. Firstly bootst
 
 \section{Examples And Results}
 

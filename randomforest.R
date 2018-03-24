@@ -57,12 +57,8 @@ bt.return[[2]]
 bt.return[[3]]
 "
 BT_Tree = function(dat, labels, p, tree.print=FALSE) {
-<<<<<<< HEAD
-  dat = dat %>% mutate(lab = labels)
-  #dat[,colnames(labels)] = labels
-=======
-  dat = cbind(dat, labels)
->>>>>>> 2aaddabfae32700856e934c1e30aee806e19e4bb
+
+   dat = cbind(dat, labels)
   last_col = ncol(dat)
   pred_name = paste(colnames(dat)[ncol(dat)],paste(" ~"))
   sample.dat = sample_n(dat, nrow(dat), replace=TRUE)
@@ -114,9 +110,9 @@ Classify = function(forest, obs){
 Loss = function(predicts, labels){
   loss =  1 - as.numeric(predicts == labels)
   error = sum(loss) / length(labels)
-  confMat <- table(predicts,labels)
-  accuracy <- sum(diag(confMat))/sum(confMat)
-  print(accuracy)
+  #confMat <- table(predicts,labels)
+ # accuracy <- sum(diag(confMat))/sum(confMat)
+  #print(accuracy)
   return (error)
 }
 

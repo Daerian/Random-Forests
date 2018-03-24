@@ -227,7 +227,6 @@ testing_set = testing_set[,-ncol(testing_set)]
 B = 5
 
 # this is the number of variables we want to use
-<<<<<<< HEAD
 M = 1   
 #f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M)
 
@@ -246,7 +245,7 @@ B2 = 500
 M2 = 3
 f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,BreastCancer)
 
-=======
+
 M = 2  
 f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M)
->>>>>>> 09fc0900ede68a85cb816cea27a69a805bbb76d9
+
