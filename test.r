@@ -11,7 +11,7 @@ libraries = c('tidyverse','rpart','rpart.plot','robustbase','dplyr', 'dbplyr', '
 
 for (lib in libraries) {
   if (!require(lib, character.only = TRUE)) {
-    install.packages(lib, repos="https://cloud.r-project.org")
+    install.packages(lib)
     library(lib, character.only = TRUE)
   } else if (!(lib %in% (.packages()))){
     library(lib, character.only = TRUE)
@@ -58,8 +58,7 @@ bt.return[[2]]
 bt.return[[3]]
 "
 BT_Tree = function(dat, labels, p, tree.print=FALSE) {
-  dat = dat %>% mutate(lab = labels)
-  #dat[,colnames(labels)] = labels
+  dat[,colnames(labels)] = labels
   last_col = ncol(dat)
   pred_name = paste(colnames(dat)[ncol(dat)],paste(" ~"))
   sample.dat = sample_n(dat, nrow(dat), replace=TRUE)
