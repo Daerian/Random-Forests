@@ -73,7 +73,7 @@ The data is formatted so that the quality is the last column of the data set. We
 To start we start at $M = 1$ (1 variable is chosen per tree), and $B = 500$ (500 trees).
 
 ```{r, message=FALSE, warning=FALSE}
-# Read red wine and white wine data from their respective filess
+# Read red wine and white wine data from their respective files
 redWineData = read_delim("winequality-red.csv", delim = ";")
 whiteWineData = read_delim("winequality-white.csv", delim = ";")
 ```
@@ -98,21 +98,29 @@ wineData$quality  = as.factor(wineData$quality)
 wineData$Type = as.factor(wineData$Type)
 wineData = wineData[,-ncol(wineData)]
 ```
-
-A bit of SQL knowledge was required to figure the next part of the code. \texttt{anti\_join} came in handy here for filtering out \texttt{wineData} weith respect to \texttt{training\_set}. Let's give it a run and see the results!
-
+Let's split the original dataset into training set and testing data. 
 ```{r, message=FALSE}
 # Split data into training data and testing data, 50% and 50% respectively
 split = sample(2, nrow(wineData), prob=c(0.5,0.5), replace=TRUE)
 training_set = wineData[split==1,]
 testing_set = wineData[split==2,]
-
+```
+Lets see if this works. 
+```{r}
+coverage = as.data.frame(table(split))
+coverage$Freq[1]/nrow(wineData)
+coverage$Freq[2]/nrow(wineData)
+```
+Perfect! Let's get ready to perform regression.
+```{r}
 # Acquire labels for the training set
 training_labels = as.numeric(as.character(training_set$quality))
 
 # Acquire labels for the testing set
 testing_labels = as.numeric(as.character(testing_set$quality))
-
+```
+Note here that we need \texttt{as.character} since when converting factors with \texttt{as.numeric} it converts the underlying number and not the factor itself. 
+```{r}
 training_set = training_set[,-ncol(training_set)]
 testing_set = testing_set[,-ncol(testing_set)]
 
@@ -125,9 +133,9 @@ M = 1
 f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M)
 ```
 
-The above results was acheived when we set the \texttt{seed} to 1. As we can see, the $R^2=0.0949576229835895$, let's see how high the $R^2$ can go. Therefore, we came up with a simulation that can give us the best result possible. Since we need a seed to keep the results consistent and reproducible, we looped through numbers 1 through 100 to set as possible seeds. First, we split the training set and testing set 50\% and 50\% respectively. this give us around the same number as when we set the training and testing set to 75\% and 25\% respectively. We decided to report the bigger number (obviously) which is $R^2=  0.237275232140961$ and $MSE= 0.573905350720447$ when $B=500$ (number of trees), \texttt{seed}$=5$ and $M=5$ (number of variables used per tree). 
+The above results was acheived when we set the \texttt{seed} to 1. As we can see, the $R^2=0.0949576229835895$, let's see how high the $R^2$ can go. Therefore, we came up with a simulation that can give us the best result possible. Since we need a seed to keep the results consistent and reproducible, we looped through numbers 1 through 100 to set as possible seeds. First, we split the training set and testing set 50\% and 50\% respectively. this give us around the same number as when we set the training and testing set to 75\% and 25\% respectively. We decided to report the bigger number (obviously) which is $R^2=  0.277918789503239$ and $MSE= 0.529555537034112$ when $B=500$ (number of trees), \texttt{seed}$=64$ and $M=5$ (number of variables used per tree). This code can be found in \texttt{experiment.R} (it takes at least 10 minutes to run depending on the parameter). 
 ```{r, message=FALSE}
-set.seed(5)
+set.seed(64)
 # Split data into training data and testing data, 75% and 25% respectively
 split = sample(2, nrow(wineData), prob=c(0.75,0.25), replace=TRUE)
 training_set = wineData[split==1,]
@@ -138,14 +146,6 @@ training_labels = as.numeric(as.character(training_set$quality))
 
 # Acquire labels for the testing set
 testing_labels = as.numeric(as.character(testing_set$quality))
-```
-Note here that we need \texttt{as.character} since when converting factors with \texttt{as.numeric} it converts the underlying number and not the factor itself. 
-```{r}
-table(training_labels)
-```
-Note the large amounts of 5 and 6 in the training sets.
-```{r}
-table(testing_labels)
 
 training_set = training_set[,-ncol(training_set)]
 testing_set = testing_set[,-ncol(testing_set)]
@@ -156,6 +156,8 @@ f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,
 We can see an improvement in $R^2$ and MSE, but $R^2$ is still very low. One of the reasons that the $R^2$ is low could be the distribution of the data we want to classify. Let's take a closer look at the labels that the Random Forest algorithm was trying to classify.
 ```{r}
 wineData %>% group_by(quality) %>% summarize(n=n())
+table(training_labels)
+table(testing_labels)
 ```
 As we can see from the counting results, most of the labels are either 5 or 6. Labels 3,4,7,8 and 9 have significantly less occurences in the data, and there are no wine with quality greater than 9. Having this distribution will lead the Random Forest to give a quality $q$, where $q\in [5,6]$ to almost all the wine, since it is more likely to sample a wine with quality 5 or 6 to build the Random Forest than to sample a wine that is not. 
 
