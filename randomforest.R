@@ -57,12 +57,7 @@ bt.return[[2]]
 bt.return[[3]]
 "
 BT_Tree = function(dat, labels, p, tree.print=FALSE) {
-<<<<<<< HEAD
-  dat = dat %>% mutate(lab = labels)
-  #dat[,colnames(labels)] = labels
-=======
   dat = cbind(dat, labels)
->>>>>>> 2aaddabfae32700856e934c1e30aee806e19e4bb
   last_col = ncol(dat)
   pred_name = paste(colnames(dat)[ncol(dat)],paste(" ~"))
   sample.dat = sample_n(dat, nrow(dat), replace=TRUE)
@@ -160,12 +155,9 @@ RSquared = function(predicts, labels){
 ####################################### FUNCTION CALLS ###############################################
 
 # Training set, Training labels, Testing set, Testing labels, # of trees, # of params / tree
-PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars,Data) {
+PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars) {
   # Set Constants
   time = proc.time()
-  Const = Constant_Set(Data)
-  m = Const[[1]]
-  col_nam = Const[[2]]
   fo=Get_Forest(Df, labels, num_trees, num_vars)
   predictions = Classify(fo,Df2)
   Loss = Loss(predictions,labels2)
