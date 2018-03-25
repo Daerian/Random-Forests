@@ -49,11 +49,6 @@ The libraries we used are as follows:
 \end{itemize}
 
 \section{Development Process}
-Let us begin with why our team decided to go with Random Forest. Daerian and Derek went to a datafest around May 2017 and several of the winning teams used random forests in their analysis of the data they were working on. So inspired by the studentsat the datafest, we decided to learn about Random Forests, and ultimately implement the algorithm in R on various datasets and see how it fares.
-
-We mainly used the "Elements of Statistical Learning" and "Introduction of Statistical learning with Applications in R"(Gareth, n.d.). Before we even got into random forest we needed to learn about the parts of randomforests needed for it to work. So just to know what random forests are, Random forests use an amalgamation of bootstrapped decision trees that sample (without replacement) the predictors to reduce bias and increase variance.
-
-Firstly we create a function that makes a bootstrapped sampled tree with sampled predictors that $m\leq p$ where p are the number of predictors. We then have a fuction that essentially loops and creates B amount of trees, creating a " random forest". We then put the B trees into a list of lists where the ith element is a list with three elements. one being the ith bootstrapped tree, second being the antijoin of the data and the sampled used to generate the the boopstrapped tree. Since bootstrapping each sample could give duplicates. Those antijoins become usefull when classifying because when classifying we do something called "out of bag sampling", where when predicting each point, we need to aggregate the trees that did not contain that observaton we are predicting as to stay accurate. We had to modify the algorithm many times due toaccuracy being nonsensical and/or low accuracy. and Now we are playing with controls to increase the accracy in any way.
 
 \section{Examples And Results}
 
@@ -65,6 +60,7 @@ library(dplyr)
 library(tidyverse)
 library(rpart)
 library(rpart.plot)
+library(ggplot2)
 set.seed(1)
 ```
 
@@ -75,7 +71,7 @@ The data is formatted so that the quality is the last column of the data set. We
 To start we start at $M = 1$ (1 variable is chosen per tree), and $B = 500$ (500 trees).
 
 ```{r, message=FALSE, warning=FALSE}
-# Read red wine and white wine data from their respective files
+# Read red wine and white wine data from their respective filess
 redWineData = read_delim("winequality-red.csv", delim = ";")
 whiteWineData = read_delim("winequality-white.csv", delim = ";")
 ```
@@ -100,29 +96,20 @@ wineData$quality  = as.factor(wineData$quality)
 wineData$Type = as.factor(wineData$Type)
 wineData = wineData[,-ncol(wineData)]
 ```
-Let's split the original dataset into training set and testing data. 
+
+A bit of SQL knowledge was required to figure the next part of the code. \texttt{anti\_join} came in handy here for filtering out \texttt{wineData} weith respect to \texttt{training\_set}. Let's give it a run and see the results!
+
 ```{r, message=FALSE}
 # Split data into training data and testing data, 50% and 50% respectively
-split = sample(2, nrow(wineData), prob=c(0.5,0.5), replace=TRUE)
-training_set = wineData[split==1,]
-testing_set = wineData[split==2,]
-```
-Lets see if this works. 
-```{r}
-coverage = as.data.frame(table(split))
-coverage$Freq[1]/nrow(wineData)
-coverage$Freq[2]/nrow(wineData)
-```
-Perfect! Let's get ready to perform regression.
-```{r}
+training_set = sample_n(wineData, nrow(wineData)/2, replace=FALSE)
+testing_set = anti_join(wineData,training_set)
+
 # Acquire labels for the training set
-training_labels = as.numeric(as.character(training_set$quality))
+training_labels = as.numeric(unlist(training_set[ncol(training_set)]))
 
 # Acquire labels for the testing set
-testing_labels = as.numeric(as.character(testing_set$quality))
-```
-Note here that we need \texttt{as.character} since when converting factors with \texttt{as.numeric} it converts the underlying number and not the factor itself. 
-```{r}
+testing_labels = as.numeric(unlist(testing_set[ncol(testing_set)]))
+
 training_set = training_set[,-ncol(training_set)]
 testing_set = testing_set[,-ncol(testing_set)]
 
@@ -135,19 +122,17 @@ M = 1
 f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M)
 ```
 
-The above results was acheived when we set the \texttt{seed} to 1. As we can see, the $R^2=0.0949576229835895$, let's see how high the $R^2$ can go. Therefore, we came up with a simulation that can give us the best result possible. Since we need a seed to keep the results consistent and reproducible, we looped through numbers 1 through 100 to set as possible seeds. First, we split the training set and testing set 50\% and 50\% respectively. this give us around the same number as when we set the training and testing set to 75\% and 25\% respectively. We decided to report the bigger number (obviously) which is $R^2=  0.277918789503239$ and $MSE= 0.529555537034112$ when $B=500$ (number of trees), \texttt{seed}$=64$ and $M=5$ (number of variables used per tree). This code can be found in \texttt{experiment.R} (it takes at least 10 minutes to run depending on the parameter). 
+The above results was acheived when we set the \texttt{seed} to 1. As we can see, the $R^2=0.0949576229835895$, let's see how high the $R^2$ can go. Therefore, we came up with a simulation that can give us the best result possible. Since we need a seed to keep the results consistent and reproducible, we looped through numbers 1 through 100 to set as possible seeds. First, we split the training set and testing set 50\% and 50\% respectively. this give us around the same number as when we set the training and testing set to 75\% and 25\% respectively. We decided to report the bigger number (obviously) which is $R^2= 0.278946347314739$ and $MSE= 0.552410794646987$ when $B=500$ (number of trees), \texttt{seed}$=5$ and $M=5$ (number of variables used). 
 ```{r, message=FALSE}
-set.seed(64)
-# Split data into training data and testing data, 75% and 25% respectively
-split = sample(2, nrow(wineData), prob=c(0.75,0.25), replace=TRUE)
-training_set = wineData[split==1,]
-testing_set = wineData[split==2,]
+set.seed(5)
+training_set = sample_n(wineData, nrow(wineData)/4, replace=FALSE)
+testing_set = anti_join(wineData,training_set)
 
 # Acquire labels for the training set
-training_labels = as.numeric(as.character(training_set$quality))
+training_labels = as.numeric(unlist(training_set[ncol(training_set)]))
 
 # Acquire labels for the testing set
-testing_labels = as.numeric(as.character(testing_set$quality))
+testing_labels = as.numeric(unlist(testing_set[ncol(testing_set)]))
 
 training_set = training_set[,-ncol(training_set)]
 testing_set = testing_set[,-ncol(testing_set)]
@@ -157,20 +142,9 @@ f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,
 
 We can see an improvement in $R^2$ and MSE, but $R^2$ is still very low. One of the reasons that the $R^2$ is low could be the distribution of the data we want to classify. Let's take a closer look at the labels that the Random Forest algorithm was trying to classify.
 ```{r}
-#Draw histogram
-data <- as.integer(as.character(wineData$quality))
-h <- hist(data, breaks=1:10, ylim=c(0, 3000), freq=TRUE, main = "Frequency Histogram", 
-          xlab = "Quality")
-
-#Fit curve with normal distribution
-xfit<-seq(min(data),max(data),length=40) 
-yfit<-dnorm(xfit,mean=mean(data),sd=sd(data)) 
-yfit <- yfit*diff(h$mids[1:2])*length(data) 
-lines(xfit, yfit, col="red", lwd=2)
-table(training_labels)
-table(testing_labels)
+# In real RMD!
 ```
-As we can see from the counting results and histogram, most of the labels are either 5 or 6. Labels 3,4,7,8 and 9 have significantly less occurences in the data, and there are no wine with quality greater than 9. Having this distribution will lead the Random Forest to give a quality $q$, where $q\in [5,6]$ to almost all the wine, since it is more likely to sample a wine with quality 5 or 6 to build the Random Forest than to sample a wine that is not. 
+As we can see from the histogram, most of the labels are either 3 or 4. Labels 1,2,5,6 and 7 have significantly less occurences in the data, and there are no wine with quality greater than 7. Having this distribution will lead the Random Forest to give a quality $q$, where $q\in [3,4]$ to almost all the wine, since it is more likely to sample a wine with quality 3 or 4 to build the Random Forest than to sample a wine that is not. 
 
 Another reason is the decision trees that are used in the algorithm. We are using \texttt{rpart} to produce the trees. This is a built in R function that generates decision trees given a dataset. Since this function is blackbox, we are not sure what exactly it does to separate the feature space to make the trees. If we had more time, we would love to learn more about how to split feature space and produce trees manually that helps us improve the accuracy.
 
@@ -183,16 +157,16 @@ BreastCancer = read.table("BreastCancer.csv",header=T, sep=",")
 Now that we have the data we can then perform Classification on it and see how it fares.
 
 ```{r BC perform}
-# training_set2 = sample_n(BreastCancer, nrow(BreastCancer)/2, replace=FALSE)
-# testing_set2 = anti_join(BreastCancer,training_set2)
-# labelsBC = as.factor(unlist(training_set2[ncol(training_set2)]))#training_set labels
-# labelsBC2 = as.factor(unlist(testing_set2[ncol(testing_set2)]))# testing_set Labels
-# training_set2 = training_set2[,-ncol(training_set2)] #getting rid of the labels to  prepare
-# # To perform classification
-# testing_set2 = testing_set2[,-ncol(testing_set2)]
-# B2 = 500
-# M2 = 3
-# f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,BreastCancer)
+training_set2 = sample_n(BreastCancer, nrow(BreastCancer)/2, replace=FALSE)
+testing_set2 = anti_join(BreastCancer,training_set2)
+labelsBC = as.factor(unlist(training_set2[ncol(training_set2)]))#training_set labels
+labelsBC2 = as.factor(unlist(testing_set2[ncol(testing_set2)]))# testing_set Labels
+training_set2 = training_set2[,-ncol(training_set2)] #getting rid of the labels to  prepare
+# toperform classification
+testing_set2 = testing_set2[,-ncol(testing_set2)]
+B2 = 500
+M2 = 3
+f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,BreastCancer)
 ```
 
 
