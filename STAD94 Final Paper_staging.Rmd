@@ -60,6 +60,7 @@ library(dplyr)
 library(tidyverse)
 library(rpart)
 library(rpart.plot)
+library(ggplot2)
 set.seed(1)
 ```
 
@@ -141,9 +142,15 @@ f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,
 
 We can see an improvement in $R^2$ and MSE, but $R^2$ is still very low. One of the reasons that the $R^2$ is low could be the distribution of the data we want to classify. Let's take a closer look at the labels that the Random Forest algorithm was trying to classify.
 ```{r}
-barplot(table(as.numeric(as.character(wineData$quality))), 
-        ylim = c(0, 3000))
+#Draw histogram
+data <- as.integer(as.character(wineData$quality))
+h <- hist(data, breaks=1:10, ylim=c(0, 3000), freq=TRUE, main = "Frequency Histogram", xlab = "Quality")
 
+#Fit curve with normal distribution
+xfit<-seq(min(data),max(data),length=40) 
+yfit<-dnorm(xfit,mean=mean(data),sd=sd(data)) 
+yfit <- yfit*diff(h$mids[1:2])*length(data) 
+lines(xfit, yfit, col="red", lwd=2)
 ```
 As we can see from the histogram, most of the labels are either 3 or 4. Labels 1,2,5,6 and 7 have significantly less occurences in the data, and there are no wine with quality greater than 7. Having this distribution will lead the Random Forest to give a quality $q$, where $q\in [3,4]$ to almost all the wine, since it is more likely to sample a wine with quality 3 or 4 to build the Random Forest than to sample a wine that is not. 
 
