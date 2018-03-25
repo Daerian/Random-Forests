@@ -49,11 +49,11 @@ The libraries we used are as follows:
 \end{itemize}
 
 \section{Development Process}
-Let us begin with why our team decided to go with Random Forest. Daerian and Derek went to a datafest around May 2017 and several of the winning teams used random forests in their analysis of the data they were working on. So inspired by the studentsat the datafest, we decided to learn about Random Forests, and ultimately implement the algorithm in R on various datasets and see how it fares.
+Let us begin with why our team decided to go with Random Forest. Daerian and Derek went to a DataFest around May 2017 and several of the winning teams used Random Forest in their analysis of the data they were working on. So inspired by the students at the DataFest, we decided to learn about Random Forest, and ultimately implement the algorithm in R on various datasets and see how it fares.
 
-We mainly used the "Elements of Statistical Learning" and "Introduction of Statistical learning with Applications in R"(Gareth, n.d.). Before we even got into random forest we needed to learn about the parts of randomforests needed for it to work. So just to know what random forests are, Random forests use an amalgamation of bootstrapped decision trees that sample (without replacement) the predictors to reduce bias and increase variance.
+We mainly used the "Elements of Statistical Learning" and "Introduction of Statistical learning with Applications in R" (Gareth, n.d.). Before we even got into Random Forest, we needed to learn about the statistical methods and algorithms used to implement a Random Forest. We found out that Random Forest use an amalgamation of bootstrapped decision trees that sample (without replacement) the predictors to reduce bias and increase variance.
 
-Firstly we create a function that makes a bootstrapped sampled tree with sampled predictors that $m\leq p$ where p are the number of predictors. We then have a fuction that essentially loops and creates B amount of trees, creating a " random forest". We then put the B trees into a list of lists where the ith element is a list with three elements. one being the ith bootstrapped tree, second being the antijoin of the data and the sampled used to generate the the boopstrapped tree. Since bootstrapping each sample could give duplicates. Those antijoins become usefull when classifying because when classifying we do something called "out of bag sampling", where when predicting each point, we need to aggregate the trees that did not contain that observaton we are predicting as to stay accurate. We had to modify the algorithm many times due toaccuracy being nonsensical and/or low accuracy. and Now we are playing with controls to increase the accracy in any way.
+Firstly, we create a function that makes a bootstrapped sampled tree with sampled predictors that $m\leq p$ where $p$ are the number of predictors. We then have a fuction that loops and creates $B$ amount of trees, creating a "Random Forest". We then put the $B$ trees into a list of lists where the $i$th element is a list with three elements. One being the $i$th bootstrapped tree, second being the anti join of the data and final element being the sample used to generate the the boopstrapped tree. Since bootstrapping each sample could give duplicates. Those antijoins become useful when classifying because when classifying we do something called "out of bag sampling", where when predicting each point, we need to aggregate the trees that did not contain that observation we are predicting as to stay accurate. We had to modify the algorithm many times due toaccuracy being nonsensical and/or low accuracy. and now we are playing with controls to increase the accracy in any way.
 
 \section{Examples And Results}
 
@@ -113,7 +113,7 @@ coverage = as.data.frame(table(split))
 coverage$Freq[1]/nrow(wineData)
 coverage$Freq[2]/nrow(wineData)
 ```
-Perfect! Let's get ready to perform regression.
+The percentages are close enough to the split we want. Perfect! Let's get ready to perform regression.
 ```{r}
 # Acquire labels for the training set
 training_labels = as.numeric(as.character(training_set$quality))
@@ -155,7 +155,7 @@ M = 5
 f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M)
 ```
 
-We can see an improvement in $R^2$ and MSE, but $R^2$ is still very low. One of the reasons that the $R^2$ is low could be the distribution of the data we want to classify. Let's take a closer look at the labels that the Random Forest algorithm was trying to classify.
+We can see an improvement in $R^2$ and MSE, but $R^2$ is still very low. One of the reasons that the $R^2$ is low could be the distribution of the data we want to classify. Let's take a closer look at the labels that the Random Forest algorithm was trying to classify, specifically the distribution.
 ```{r}
 #Draw histogram
 data <- as.integer(as.character(wineData$quality))
@@ -167,10 +167,16 @@ xfit<-seq(min(data),max(data),length=40)
 yfit<-dnorm(xfit,mean=mean(data),sd=sd(data)) 
 yfit <- yfit*diff(h$mids[1:2])*length(data) 
 lines(xfit, yfit, col="red", lwd=2)
+
+# Occurences of labels in training set and testing set
 table(training_labels)
 table(testing_labels)
 ```
-As we can see from the counting results and histogram, most of the labels are either 5 or 6. Labels 3,4,7,8 and 9 have significantly less occurences in the data, and there are no wine with quality greater than 9. Having this distribution will lead the Random Forest to give a quality $q$, where $q\in [5,6]$ to almost all the wine, since it is more likely to sample a wine with quality 5 or 6 to build the Random Forest than to sample a wine that is not. 
+As we can see from the counting results and histogram, most of the labels are either 5 or 6. Labels 3,4,7,8 and 9 have significantly less occurences in the data, and there are no wine with quality greater than 9. Having this distribution will lead the Random Forest to give a quality $q$, where $q\in [5,7)$ to almost all the wine, since it is more likely to sample a wine with quality 5 or 6 to build the Random Forest than to sample a wine that is not. Let's take a look at a sample decision tree to confirm this hypothesis.
+```{r}
+sample_dtree = BT_Tree(training_set, training_labels, 5, tree.print=TRUE)
+```
+We can see that the leaf nodes all have qualities/labels that are in the open interval $[5,7)$. Generating large number of trees won't change this result. Even if there was a few decision trees that predicted other qualities, these predictions would get 'outnumbered' and would be insignificant to the final prediction.
 
 Another reason is the decision trees that are used in the algorithm. We are using \texttt{rpart} to produce the trees. This is a built in R function that generates decision trees given a dataset. Since this function is blackbox, we are not sure what exactly it does to separate the feature space to make the trees. If we had more time, we would love to learn more about how to split feature space and produce trees manually that helps us improve the accuracy.
 
