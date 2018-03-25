@@ -35,14 +35,15 @@ for (i in 1:100) {
   set.seed(i)
 
   # Split data into training data and testing data, 50% and 50% respectively
-  training_set = sample_n(wineData, nrow(wineData)/4, replace=FALSE)
-  testing_set = anti_join(wineData,training_set)
+  split = sample(2, nrow(wineData), prob=c(0.75,0.25), replace=TRUE)
+  training_set = wineData[split==1,]
+  testing_set = wineData[split==2,]
   
   # Acquire labels for the training set
-  training_labels = as.numeric(unlist(training_set[ncol(training_set)]))
+  training_labels = as.numeric(as.character(training_set$quality))
   
   # Acquire labels for the testing set
-  testing_labels = as.numeric(unlist(testing_set[ncol(testing_set)]))
+  testing_labels = as.numeric(as.character(testing_set$quality))
   
   training_set = training_set[,-ncol(training_set)]
   testing_set = testing_set[,-ncol(testing_set)]
@@ -53,7 +54,7 @@ for (i in 1:100) {
   B = 500
   
   f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,m)
-    if (f[[2]] > R2 & M != m & seed != i) {
+    if (f[[2]] > R2 & (M != m | seed != i)) {
       R2 = f[[2]]
       M = m
       seed = i
