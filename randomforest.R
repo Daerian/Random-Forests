@@ -1,6 +1,4 @@
 ################################# LIBRARIES AND MISCELLANEOUS ######################################
-rm(list = ls())
-
 "
 All required libraries to the 'libraries' vector of strings below. All libraries in the
 vector of strings will be installed and/or loaded on runtime if not already installed/loaded.
@@ -56,16 +54,23 @@ bt.return[[2]]
 # To access all observations not used in sampled predictors & bootstrapped sample
 bt.return[[3]]
 "
-BT_Tree = function(dat, labels, p, tree.print=FALSE) {
-  dat = cbind(dat, labels)
-  last_col = ncol(dat)
+BT_Tree = function(dat, labels, p, tree.print = "None", ctrl = "None") {
+  # Set up Data to use
+  dat = cbind(dat, labels) # add labels together with dataframe
+  last_col = ncol(dat) # register the labels
   pred_name = paste(colnames(dat)[ncol(dat)],paste(" ~"))
   sample.dat = sample_n(dat, nrow(dat), replace=TRUE)
   sample.p.dat = sample(sample.dat[,-last_col], p, replace=FALSE)
   param = paste(pred_name, paste(names(sample.p.dat), collapse = " + "))
   sample.p.dat[,colnames(dat)[ncol(dat)]] = sample.dat[,last_col]
-  trees = rpart(formula=param, data=sample.p.dat)
-  if (tree.print) {
+  
+  # Set up Control sets and then perform the feature splits
+  if (ctrl == "None"){
+    ctrl = rpart.control(cp = 0.005, minsplit = 500, xval = 10)
+  }
+  
+  trees = rpart(formula=param, data=sample.p.dat, control = ctrl)
+  if (!(tree.print == "None")) {
     rpart.plot(trees)
   }
   ret = list()
@@ -76,10 +81,10 @@ BT_Tree = function(dat, labels, p, tree.print=FALSE) {
 }
 
 # Returns a forest
-Get_Forest = function(dat, labels, B, p){
+Get_Forest = function(dat, labels, B, p, print.tree = "None", ctrl = "None"){
   forest = list()
   for (i in 1:B) {
-    forest[[i]] = BT_Tree(dat, labels, p)
+    forest[[i]] = BT_Tree(dat, labels, p, "None", ctrl)
   }
   return(forest)
 }
@@ -155,10 +160,10 @@ RSquared = function(predicts, labels){
 ####################################### FUNCTION CALLS ###############################################
 
 # Training set, Training labels, Testing set, Testing labels, # of trees, # of params / tree
-PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars) {
+PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars, ctrl = "None") {
   # Set Constants
   time = proc.time()
-  fo=Get_Forest(Df, labels, num_trees, num_vars)
+  fo=Get_Forest(Df, labels, num_trees, num_vars, "None", ctrl)
   predictions = Classify(fo,Df2)
   Loss = Loss(predictions,labels2)
   print("Results:")
@@ -169,13 +174,10 @@ PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars) 
 }
 
 # Training set, Training labels, Testing set, Testing labels, # of trees, # of params / tree
-PerformRegression = function(Df, labels, Df2, labels2, num_trees, num_vars) {
+PerformRegression = function(Df, labels, Df2, labels2, num_trees, num_vars, ctrl = "None") {
   # Set Constants
   time = proc.time()
-  Const = Constant_Set(Df)
-  m = Const[[1]]
-  col_nam = Const[[2]]
-  fo=Get_Forest(Df, labels, num_trees, num_vars)
+  fo=Get_Forest(Df, labels, num_trees, num_vars, "None", ctrl)
   predictions = Regress(fo,Df2)
   MSE = Accuracy(predictions, labels2)
   R2 = RSquared(predictions, labels2)
