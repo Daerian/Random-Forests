@@ -81,7 +81,10 @@ From here we had to come up with and create classification and regressive compar
 We created two functions, one for clasification and one for regression. These will create their respective models and then have them ready for assessment that corresopnds to the type of model.
 Under classification we have Loss function, which calculates false possitives. For regression we calculate a MSE and a coefficient of determination using the formulas involving the error terms. This allows us to account for all possibile conditional distributions of the multivariable regressions, since we use only the final residual, which is the leftover from the total minus the sum of all regressive sum of squares.
 
+The process by which we worked out a working variant of the accuracy function
+
 Finally we implemented the control mechanic. We can now control the number of splits, the number of cross validations for each tree, the minimum increase of R2 per split, etc. This function also increased our own values by a significant amount. The issue is that majority of these are hyper-parameters that we have to come up with outselves.
+
 
 
 \section{Examples And Results}
