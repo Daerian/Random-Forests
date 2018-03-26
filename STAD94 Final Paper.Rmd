@@ -213,6 +213,7 @@ Here's another example, but instead we will do classification on this dataset ra
 
 ```{r BC read, cache=TRUE, message=FALSE, warning=FALSE}
 BreastCancer = read.table("BreastCancer.csv",header=T, sep=",")
+BreastCancer = BreastCancer[-1]
 ```
 Now that we have the data we can then perform Classification on it and see how it fares.
 
@@ -231,6 +232,10 @@ Now that we have the data we can then perform Classification on it and see how i
 
 
 \section{Wrap-Up}
+We enjoyed working on this project a lot. Researching about bootstrapping, bagging and Random Forest algorithm is very interesting. 
+We came across hurdles while implementing the algorithm, issues concerning with runtime, complexity of the algorithm and alternatives for sections that we didn't have sufficient time to learn. 
+
+Of course, there's room for improvement. Using Random Forest to do regression, our $R^2$ was not as high as we wanted. The MSE was satisfactory as well, as a consequence to the $R^2$ being low. Also for classification, predictions are really bad. We suspect if we had can manually control the splitting of the feature space and how the decision trees are made. 
 
 \section{Appendix}
 \textsc{Note:} The following libraries are used throughout the code: \texttt{tidyverse}, \texttt{dplyr}, \texttt{rpart}, and \texttt{rpart.plot}.
