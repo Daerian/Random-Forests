@@ -205,6 +205,7 @@ Here's another example, but instead we will do classification on this dataset ra
 
 ```{r BC read, cache=TRUE, message=FALSE, warning=FALSE}
 BreastCancer = read.table("BreastCancer.csv",header=T, sep=",")
+BreastCancer = BreastCancer[-1]
 ```
 Now that we have the data we can then perform Classification on it and see how it fares.
 
