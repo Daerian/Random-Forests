@@ -23,9 +23,33 @@ containing the parameter names.
 ```{r, include=FALSE}
 data_file <- "Faults.NNA"
 headers_file <- "Faults27x7_var.txt"
-data <- read.table(file, sep = "" , header = F, na.strings ="", 
+data <- read.table(data_file, sep = "" , header = F, na.strings ="", 
                    stringsAsFactors= F)
 data_headers <- scan(headers_file, what="", sep="\n")
 colnames(data) <- data_headers
 ```
 
+Clean data and make column names string-friendly
+```{r, include=FALSE}
+#Purge rows containing N/A entries
+data <- (data[complete.cases(data),])
+
+# Remove spaces from column names
+names(data) = gsub(" ","_", names(data))
+```
+
+Split data into training and testing sets with a 7:3 ratio and replacement
+```{r, include=FALSE}
+split = sample(2, nrow(data), prob=c(0.7,0.3), replace=TRUE)
+train_subset = data[split==1,]
+test_subset = data[split==2,]
+```
+
+
+```{r, warning=FALSE}
+train_labels = as.factor(unlist(train_labels[ncol(train_labels)]))#training_set labels
+test_labels = as.factor(unlist(test_labels[ncol(test_labels)]))# testing_set Labels
+num_trees = 500
+num_something = 3
+f = PerformClassification(train_subset,train_labels,test_subset,test_labels,num_trees,num_something,data)
+```
