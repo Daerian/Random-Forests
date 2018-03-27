@@ -1,0 +1,31 @@
+---
+title: "A look into the applications of random forest for the steel dataset"
+author: "Zong Li"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Import necessary packages:
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+source("randomforest.R")
+library(dplyr)
+library(tidyverse)
+library(rpart)
+library(rpart.plot)
+set.seed(1)
+```
+
+Read data. The parameter names and the data itself is in two separate files;
+we need to first read in the data then set set the column names using the file 
+containing the parameter names.
+```{r, include=FALSE}
+data_file <- "Faults.NNA"
+headers_file <- "Faults27x7_var.txt"
+data <- read.table(file, sep = "" , header = F, na.strings ="", 
+                   stringsAsFactors= F)
+data_headers <- scan(headers_file, what="", sep="\n")
+colnames(data) <- data_headers
+```
+
