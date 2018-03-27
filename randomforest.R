@@ -108,6 +108,7 @@ Classify = function(forest, obs){
   for (i in 1:numTrees){
     predictions = predict(forest[[i]][[1]], obs)
   }
+  predictions = apply(predictions,1,which.max)-1
   return (predictions)
 }
 
