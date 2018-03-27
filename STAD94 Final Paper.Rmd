@@ -235,7 +235,7 @@ training_set2 = training_set2[,-ncol(training_set2)] #getting rid of the labels 
 testing_set2 = testing_set2[,-ncol(testing_set2)]
 B2 = 500
 M2 = 3
-f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,BreastCancer)
+f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2)
 ```
 
 

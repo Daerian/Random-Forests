@@ -115,9 +115,7 @@ Classify = function(forest, obs){
 Loss = function(predicts, labels){
   loss =  1 - as.numeric(predicts == labels)
   error = sum(loss) / length(labels)
-  #confMat <- table(predicts,labels)
- # accuracy <- sum(diag(confMat))/sum(confMat)
-  #print(accuracy)
+  error = 1 - error
   return (error)
 }
 
