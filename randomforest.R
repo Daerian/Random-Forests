@@ -166,7 +166,7 @@ PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars, 
   predictions = Classify(fo,Df2)
   Loss = Loss(predictions,labels2)
   print("Results:")
-  print (paste (c("Loss = ", Loss), collapse = ""))
+  print (paste (c("Accuracy = ", Loss, "%"), collapse = ""))
   print("Timings: ")
   print(proc.time() - time)
   return (fo)
