@@ -208,7 +208,15 @@ lines(xfit, yfit, col="red", lwd=2)
 table(training_labels)
 table(testing_labels)
 ```
-As we can see from the counting results and histogram, most of the labels are either 5 or 6. Labels 3,4,7,8 and 9 have significantly less occurences in the data, and there are no wine with quality greater than 9. Having this distribution will lead the Random Forest to give a quality $q$, where $q\in [5,7)$ to almost all the wine, since it is more likely to sample a wine with quality 5 or 6 to build the Random Forest than to sample a wine that is not. Let's take a look at a sample decision tree to confirm this hypothesis.
+The histogram above depicts the frequency of quality ratings of wine to be normally distributed, peaking at 6. We can also observe that quality 5 is also very popular amongst all estimated qualities using Random Forest. The less frequently estimated qualities, 1,2,3,4,7,8, and 9, are less popular due to the qualities appearing less in the training set and in the whole data file, in general. Taking a look at the mean and variance of the distribution, we get: 
+```{r}
+print("mean: ")
+mean(data)
+print("variance: ")
+(sd(data))^2
+```
+
+This tells us that most of our estimated data falls between 5.05 and 6.57, which supports our previous assumption that most wines have quality 5 or 6, hence the likelihood of estimating 5 or 6 is high. Let's take a look at a sample decision tree to confirm this hypothesis:
 ```{r}
 sample_dtree = BT_Tree(training_set, training_labels, 5, tree.print=TRUE)
 ```
@@ -226,16 +234,25 @@ BreastCancer = BreastCancer[-1]
 Now that we have the data we can then perform Classification on it and see how it fares.
 
 ```{r BC perform, warning=FALSE}
-training_set2 = sample_n(BreastCancer, nrow(BreastCancer)/2, replace=FALSE)
-testing_set2 = anti_join(BreastCancer,training_set2)
-labelsBC = as.factor(unlist(training_set2[ncol(training_set2)]))#training_set labels
-labelsBC2 = as.factor(unlist(testing_set2[ncol(testing_set2)]))# testing_set Labels
-training_set2 = training_set2[,-ncol(training_set2)] #getting rid of the labels to  prepare
-# To perform classification
+set.seed(41)
+split = sample(2, nrow(BreastCancer), prob=c(0.8,0.2), replace=TRUE)
+training_set2 = BreastCancer[split==1,]
+testing_set2 = BreastCancer[split==2,]
+
+# Training set labels
+labelsBC = as.factor(unlist(training_set2[ncol(training_set2)]))
+
+# Testing set labels
+labelsBC2 = as.factor(unlist(testing_set2[ncol(testing_set2)]))
+
+# Getting rid of the labels to prepare for classification using Random Forest
+training_set2 = training_set2[,-ncol(training_set2)] 
+
 testing_set2 = testing_set2[,-ncol(testing_set2)]
 B2 = 500
 M2 = 3
-f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,BreastCancer)
+ctrl = rpart.control(cp = 0.004, minsplit = 500, xval = 10)
+f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,ctrl)
 ```
 
 
