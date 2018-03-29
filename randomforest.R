@@ -168,7 +168,6 @@ PerformClassification = function(Df, labels, Df2, labels2, num_trees, num_vars, 
   fo=Get_Forest(Df, labels, num_trees, num_vars, "None", ctrl)
   predictions = Classify(fo,Df2)
   Loss = Loss(predictions,labels2)
-  Loss = Loss*100
   print("Results:")
   print (paste (c("Accuracy = ", Loss, "%"), collapse = ""))
   print("Timings: ")

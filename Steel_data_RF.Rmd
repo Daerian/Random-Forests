@@ -1,0 +1,69 @@
+---
+title: "A look into the applications of random forest for the steel dataset"
+author: "Zong Li"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Import necessary packages:
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+source("randomforest.R")
+library(dplyr)
+library(tidyverse)
+library(rpart)
+library(rpart.plot)
+set.seed(1)
+```
+
+Read data. The parameter names and the data itself is in two separate files;
+we need to first read in the data then set set the column names using the file 
+containing the parameter names. Keep one dependent variables to classify, remove 
+the other dependent variables.
+```{r, include=FALSE}
+data_file <- "Faults.NNA"
+headers_file <- "Faults27x7_var.txt"
+data <- read.table(data_file, sep = "" , header = F, na.strings ="", 
+                   stringsAsFactors= F)
+data_headers <- scan(headers_file, what="", sep="\n")
+colnames(data) <- data_headers
+
+#Type of dependent variables (7 Types of Steel Plates Faults): 
+#1.Pastry
+#2.Z_Scratch 
+#3.K_Scatch 
+#4.Stains 
+#5.Dirtiness 
+#6.Bumps 
+#7.Other_Faults 
+to_remove <- c("Pastry", "Z_Scratch", "K_Scatch", "Stains", "Dirtiness", "Bumps")
+data <- data[ , !(names(data) %in% to_remove)]
+
+```
+
+Clean data and make column names string-friendly
+```{r, include=FALSE}
+#Purge rows containing N/A entries
+data <- (data[complete.cases(data),])
+
+# Remove spaces from column names
+names(data) = gsub(" ","_", names(data))
+```
+
+Split data into training and testing sets with a 7:3 ratio and replacement
+```{r, include=FALSE}
+split = sample(2, nrow(data), prob=c(0.7,0.3), replace=TRUE)
+train_subset = data[split==1,]
+test_subset = data[split==2,]
+```
+
+
+```{r, warning=FALSE}
+train_labels = as.factor(unlist(train_subset[ncol(train_subset)]))#training_set labels
+test_labels = as.factor(unlist(test_subset[ncol(test_subset)]))# testing_set Labels
+
+num_trees = 500
+num_features = 3
+f = PerformClassification(train_subset,train_labels,test_subset,test_labels,num_trees,num_something)
+```
