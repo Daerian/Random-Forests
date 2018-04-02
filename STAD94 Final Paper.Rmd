@@ -103,7 +103,8 @@ library(rpart.plot)
 set.seed(1)
 ```
 
-\subsection{Wine Data}
+\subsection{\textbf{Regression}}
+\subsubsection{Wine Data}
 
 
 We needed a dataset that was known to perform well and has been tested with different machine learning algorithms extensively. After looking through the machine learning repository, we chose the Wine Quality dataset as it was one of the more popular datasets for regression.
@@ -229,8 +230,8 @@ sample_dtree = BT_Tree(training_set, training_labels, 5, tree.print=TRUE)
 We can see that the leaf nodes all have qualities/labels that are in the open interval $[5,7)$. Generating large number of trees won't change this result. Even if there was a few decision trees that predicted other qualities, these predictions would get 'outnumbered' and would be insignificant to the final prediction.
 
 Another reason is the decision trees that are used in the algorithm. We are using \texttt{rpart} to produce the trees. This is a built in R function that generates decision trees given a dataset. Since this function is blackbox, we are not sure what exactly it does to separate the feature space to make the trees. If we had more time, we would love to learn more about how to split feature space and produce trees manually that helps us improve the accuracy.
-
-\subsection{Breast Cancer}
+\subsection{\textbf{Classification}}
+\subsubsection{Breast Cancer}
 Similarily, we needed a dataset that is binary (2 classes), so its simple and it will classify well. We chose the Wisconsin Breast Cancer data from the Machine Learning Repository. Its a dataset that has 699 observations and 10 features. The features compose of things such as uniformity of cell size, the uniformity of the cell shape, cell size etc. And as said before, it has two classes class 2 for benign, 4 for malignant (but for coding purposes we changed it to 0 and 1 for benign and malignant respectively).
 
 For ease of reading in the data, this data has been preprocessed already regression. This data is is preprocessed already so we have to read in the data only.
@@ -262,7 +263,11 @@ M2 = 3
 ctrl = rpart.control(cp = 0.004, minsplit = 500, xval = 10)
 f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,ctrl)
 ```
+The loss we got for classifcation on the recommended number of variables is about 0.9787, so approximately 97.9% accuracy. This is quite good. Based on what we have read about classification with random forests, if the data is simple the accuracy will be quite high and due to the effect of having to do a combination of m of the p variables in the data, it reduces the possibility to overfit. So with that in mind, we can be quite certain that our accuracy we obtained makes sense.
 
+\subsubsection{Steel Data}
+
+Now that we know previously that our implementation of Random Forests classified fairly well against data that 
 
 \section{Wrap-Up}
 We enjoyed working on this project a lot. Researching about bootstrapping, bagging and Random Forest algorithm is very interesting. 
