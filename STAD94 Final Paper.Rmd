@@ -263,7 +263,7 @@ M2 = 3
 ctrl = rpart.control(cp = 0.004, minsplit = 500, xval = 10)
 f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,ctrl)
 ```
-The loss we got for classifcation on the recommended number of variables is about 0.9787, so approximately 97.9% accuracy. This is quite good. Based on what we have read about classification with random forests, if the data is simple the accuracy will be quite high and due to the effect of having to do a combination of m of the p variables in the data, it reduces the possibility to overfit. So with that in mind, we can be quite certain that our accuracy we obtained makes sense.
+The loss we got for classifcation on the recommended number of variables is about 0.9787, so approximately 97.87% accuracy. This is quite good. Based on what we have read about classification with random forests, if the data is simple the accuracy will be quite high and due to the effect of having to do a combination of m of the p variables in the data, it reduces the possibility to overfit. So with that in mind, we can be quite certain that our accuracy we obtained makes sense.
 
 \subsubsection{Steel Data}
 

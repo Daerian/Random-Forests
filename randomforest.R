@@ -116,9 +116,9 @@ Classify = function(forest, obs){
 }
 
 Loss = function(predicts, labels){
-  loss =  1 - as.numeric(predicts == labels)
+  loss =  as.numeric(predicts == labels)
   error = sum(loss) / length(labels)
-  error = 1 - error
+  error = error
   return (error)
 }
 
