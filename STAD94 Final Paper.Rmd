@@ -103,7 +103,8 @@ library(rpart.plot)
 set.seed(1)
 ```
 
-\subsection{Wine Data}
+\subsection{\textbf{Regression}}
+\subsubsection{Wine Data}
 
 We will create an example using Wine Data. This data performs well using a regression model.
 The data is formatted so that the quality is the last column of the data set. We will properly read and process the data so that we can run it through our random forest algorithm.
@@ -225,7 +226,8 @@ We can see that the leaf nodes all have qualities/labels that are in the open in
 
 Another reason is the decision trees that are used in the algorithm. We are using \texttt{rpart} to produce the trees. This is a built in R function that generates decision trees given a dataset. Since this function is blackbox, we are not sure what exactly it does to separate the feature space to make the trees. If we had more time, we would love to learn more about how to split feature space and produce trees manually that helps us improve the accuracy.
 
-\subsection{Breast Cancer}
+\subsection{\textbf{Classification}}
+\subsubsection{Breast Cancer}
 Here's another example, but instead we will do classification on this dataset rather than regression. This data is is preprocessed already so we have to read in the data only.
 
 ```{r BC read, cache=TRUE, message=FALSE, warning=FALSE}
@@ -247,7 +249,12 @@ M2 = 3
 f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,BreastCancer)
 ```
 
-----Steel Data----
+The loss we got for classifcation on the recommended number of variables is about 0.9787, so approximately 97.9% accuracy. This is quite good. Based on what we have read about classification with random forests, if the data is simple the accuracy will be quite high and due to the effect of having to do a combination of m of the p variables in the data, it reduces the possibility to overfit. So with that in mind, we can be quite certain that our accuracy we obtained makes sense.
+
+\subsubsection{Steel Data}
+ 
+Now that we know previously that our implementation of Random Forests classified fairly well against data that has only two classes. Now we will se how our implementation of RandomForests fares against data that has 7 classes.
+
 
 
 Read data. The parameter names and the data itself is in two separate files;
