@@ -64,6 +64,7 @@ train_labels = as.factor(unlist(train_subset[ncol(train_subset)]))#training_set 
 test_labels = as.factor(unlist(test_subset[ncol(test_subset)]))# testing_set Labels
 
 num_trees = 500
-num_features = 3
-f = PerformClassification(train_subset,train_labels,test_subset,test_labels,num_trees,num_something)
+num_vars = 3
+#function(Df, labels, Df2, labels2, num_trees, num_vars, ctrl = "None")
+f = PerformClassification(train_subset,train_labels,test_subset,test_labels,num_trees,num_vars, ctrl = "None")
 ```
