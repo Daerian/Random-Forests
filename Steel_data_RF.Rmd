@@ -77,8 +77,8 @@ test_labels = as.factor(unlist(test_subset[ncol(test_subset)]))# testing_set Lab
 train_subset = train_subset[,-ncol(train_subset)] #getting rid of the labels to  prepare
 # To perform classification
 test_subset = test_subset[,-ncol(test_subset)]
-num_trees = 500
-num_vars = 3
+num_vars = 5
+num_trees = 800
 #function(Df, labels, Df2, labels2, num_trees, num_vars, ctrl = "None")
 f = PerformClassification(train_subset,train_labels,test_subset,test_labels,num_trees,num_vars, ctrl = "None")
 ```

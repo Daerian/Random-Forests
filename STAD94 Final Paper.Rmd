@@ -264,7 +264,7 @@ The loss we got for classifcation on the recommended number of variables is abou
 
 \subsubsection{Steel Data}
  
-Now that we know previously that our implementation of Random Forests classified fairly well against data that has only two classes. Now we will se how our implementation of RandomForests fares against data that has 7 classes.
+Now that we know previously that our implementation of Random Forests classified fairly well against data that has only two classes. Now we will see how our implementation of RandomForests fares against data that has 6 classes.
 
 
 
@@ -287,10 +287,19 @@ colnames(data) <- data_headers
 #4.Stains 
 #5.Dirtiness 
 #6.Bumps 
-#7.Other_Faults 
+#7.Other_Faults
+# change the values of the other categories to correspond the number of the type of steel fault
+data=subset(data,select=-c(Other_Faults))
+labels = subset(data, select=c("Pastry", "Z_Scratch", "K_Scatch", "Stains", "Dirtiness", "Bumps"))
+
+data <- (data[complete.cases(data),])
+# now to make the categories into one columns
+Fault_Type = names(labels)[max.col(labels == 1L)]
 to_remove <- c("Pastry", "Z_Scratch", "K_Scatch", "Stains", "Dirtiness", "Bumps")
 data <- data[ , !(names(data) %in% to_remove)]
+data = cbind(data,Fault_Type)
 
+data = within(data, Fault_Type <- factor(Fault_Type, labels = c(6,5,3,1,4,2)))
 ```
 
 Clean data and make column names string-friendly
@@ -302,8 +311,11 @@ data <- (data[complete.cases(data),])
 names(data) = gsub(" ","_", names(data))
 ```
 
-Split data into training and testing sets with a 7:3 ratio and replacement
+ Permutate data and Split data into training and testing sets with a 7:3 ratio and replacement
 ```{r, include=FALSE}
+# first permutate the data because the data needs to be random
+
+data<- data[sample(nrow(data)),]
 split = sample(2, nrow(data), prob=c(0.7,0.3), replace=TRUE)
 train_subset = data[split==1,]
 test_subset = data[split==2,]
@@ -313,12 +325,15 @@ test_subset = data[split==2,]
 ```{r, warning=FALSE}
 train_labels = as.factor(unlist(train_subset[ncol(train_subset)]))#training_set labels
 test_labels = as.factor(unlist(test_subset[ncol(test_subset)]))# testing_set Labels
-
-num_trees = 500
-num_vars = 3
+train_subset = train_subset[,-ncol(train_subset)] #getting rid of the labels to  prepare
+# To perform classification
+test_subset = test_subset[,-ncol(test_subset)]
+num_vars = 5
+num_trees = 800
 #function(Df, labels, Df2, labels2, num_trees, num_vars, ctrl = "None")
 f = PerformClassification(train_subset,train_labels,test_subset,test_labels,num_trees,num_vars, ctrl = "None")
 ```
+We obtained a accuracy of around 53.3%. This is significantly worse than the Breast Cancer data, which had only binary variables. There are more variables, more observations and more classes, so it should be more difficult to have as high of accuracy as the Breast Cancer Data. Like in the previous performs, we will try to add a control to try to increase the accuracy.
 
 \section{Wrap-Up}
 We enjoyed working on this project a lot. Researching about bootstrapping, bagging and Random Forest algorithm is very interesting. 

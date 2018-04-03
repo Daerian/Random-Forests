@@ -108,13 +108,12 @@ Classify = function(forest, obs){
   # This for loop will add the predictions of every tree together, so they can be aggregated
   for (i in 1:numTrees){
     predictions = predict(forest[[i]][[1]], obs)
-    pred_labels[[i]] = apply(predictions,1,which.max)
+    pred_labels[[i]] = colnames(predictions)[apply(predictions,1,which.max)]
   }
   pred_labels.matrix = do.call(cbind, pred_labels)
   ag_labels = apply(pred_labels.matrix, 1, function(x) as.numeric(as.character(names(which.max(table(x))))))
-  return(as.factor(ag_labels))
+  return(ag_labels)
 }
-
 Loss = function(predicts, labels){
   loss =  as.numeric(predicts == labels)
   error = sum(loss) / length(labels)
