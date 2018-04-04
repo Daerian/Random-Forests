@@ -18,12 +18,20 @@ knitr::opts_chunk$set(echo = TRUE)
 \tableofcontents
 \newpage
 
+// I'm adding a few comments C-style with the double slashes. Take them out when you've thought about them.
+
+// Having scanned through all of this, I like overall how it looks. You have one or two other data sets to
+// talk about as well, don't you? Also, once you have a regression and a classification example, you might be able
+// to do a compare-and-contrast about how well they work (and maybe even compare that to what you've read about how well
+// classification and regression typically work in this context).
 
 \section{Introduction}
 
 This project was aimed at building and using an algorithm that will create predictions for classification and regression problems by using the idea of "random forests." The algorithm heavily relies on the aspect of "randomness" to reduce bias, since it attempts to randomly select sample spaces AND feature spaces from the original data, and does it hundreds of times over. The goal is to then to train a series of models and gain inputs from each, contributing to a final result. The algorithm does best at predicting the regressive variant for quantitative predictions. 
 
 A "random forest" is a collections of decision trees which each perform predictions, after which the forest will aggregate these or select a prediction which it will return. Each tree is trained over a bootstrapped sample of the   training set, with a randomly selected set of variables to create it's feature space. This means that each tree has high bias, however since the forest is intended for use with hundreds of trees, the bias in the overall forest drops significantly lower than other models for this result.
+
+// you could have 2 paragraphs here, one about trees, and a second about making forests out of trees.
 
 
 Bootstrapping is the process by which we create a sample of the original data, which has the same size as the original data. This is made possible because the sampling is done with replacement. Therefore, the same observations can be used repeatedly, with a uniform distribution chance to be chosen.
@@ -74,6 +82,8 @@ We had managed to get basic trees to show up! little did we know they ended up b
 
 From here on out, we started to work on other functions. We needed a way to actually create the forest. So, we first began by creating a function that took as input the number of boostraps, the number of features for each tree, and the data the trees would be based on. We took these inputs, and created as many bootstrap samples as the input specified, creating a tree using the previous function using this bootstrap as the data instead! So far so good. We had a way to iteratively create trees for each bootstrap sample. There was however a key problem tht had arrised: How do we store these trees? How do we retreive which observations were affected by the tree? Which ones could we test on? As it turns out, R doesn't allow us to create datatypes with the same efficiency as other platforms, so we had to improvise. Our solution was to create empty lists for everything and then append to them. Each tree return would now consist of the tree itself, the set of all observations in the original training data that the tree did NOT use to train (making cross validation ... valid on these sets) and the list of the variables that it has found to be the most important in prediction (out of the ones chosen for it's features only.)
 
+// it would help to know the difference between "its" and "it's"!
+
 These lists returned by the tree function would find themselves added to a nother list inside the forest function which stores all the trees returned for each bootstrap. This is then made additionally nested, since the tree itself is also a list! Each part of the tree (such as the plits, it's important variables, the methods it has, function calls, etc) is also stored in a list or a series of nested lists. As you can imagine this results to objects of substantial order. One of the challenges of creating this script was tracking the location of things we needed in this large cluster of topography. Fortunately, we found a way to work with this chaos, and retreived all the things we needed.
 
 Now that we had working forests, we had to compare them. So began the largely arduous process of running large batches of forests and comparing these trees, needless to say the most difficult part of this process was simply waiting. The trees took time to compute and as a result so to did the forests, which contained many such sets of trees. Fortunately we managed to find a series of pros and cons, and thought fo a way to approach such issues. One interesting thing that came up was the number of splits in each tree. On average, we had less splits than other algorithms. This is an issue that is fixed later via the use of "controls."
@@ -88,7 +98,7 @@ In addition we came to the realization that the formula for MSE and $R^2$ we wer
 Prior to the use of controls we had trouble creating splitting or using cross validation. We tried to fix this with excessive numbers of trees and various variables selected. None of these meathods would serve our purposes, and we were despondant for a better option.
 Finally we implemented the control mechanic. We can now control the number of splits, the number of cross validations for each tree, the minimum increase of $R^2$ per split, etc. This function also increased our own values by a significant amount. The issue is that majority of these are hyper-parameters that we have to come up with outselves.
 
-
+// I like this (above) -- makes the whole thing alive!
 
 \section{Examples And Results}
 
@@ -105,6 +115,8 @@ set.seed(1)
 
 \subsection{\textbf{Regression}}
 \subsubsection{Wine Data}
+
+// you can have or point to an introduction about what the wine data set contains
 
 We will create an example using Wine Data. This data performs well using a regression model.
 The data is formatted so that the quality is the last column of the data set. We will properly read and process the data so that we can run it through our random forest algorithm.
@@ -223,6 +235,8 @@ This tells us that most of our estimated data falls between 5.05 and 6.57, which
 sample_dtree = BT_Tree(training_set, training_labels, 5, tree.print=TRUE)
 ```
 We can see that the leaf nodes all have qualities/labels that are in the open interval $[5,7)$. Generating large number of trees won't change this result. Even if there was a few decision trees that predicted other qualities, these predictions would get 'outnumbered' and would be insignificant to the final prediction.
+
+// do you mean (5,7)?
 
 Another reason is the decision trees that are used in the algorithm. We are using \texttt{rpart} to produce the trees. This is a built in R function that generates decision trees given a dataset. Since this function is blackbox, we are not sure what exactly it does to separate the feature space to make the trees. If we had more time, we would love to learn more about how to split feature space and produce trees manually that helps us improve the accuracy.
 
