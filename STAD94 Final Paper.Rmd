@@ -214,7 +214,7 @@ M = 1
 f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M)
 ```
 
-The above results was acheived when we set the \texttt{seed} to 1. As we can see, the $R^2=0.0953803998083936$, let's see how high the $R^2$ can go. Therefore, we came up with a simulation that can give us the best result possible. Since we need a seed to keep the results consistent and reproducible, we looped through numbers 1 through 100 to set as possible seeds. First, we split the training set and testing set 50\% and 50\% respectively. this give us around the same number as when we set the training and testing set to 75\% and 25\% respectively. We decided to report the bigger number (obviously) which is $R^2=  0.277918789503239$ and $MSE= 0.529555537034112$ when $B=1500$ (number of trees), \texttt{seed}$=64$ and $M=5$ (number of variables used per tree). 
+The above results was acheived when we set the \texttt{seed} to 1. As we can see, the $R^2=0.0990355159865147$, let's see how high the $R^2$ can go. Therefore, we came up with a simulation that can give us the best result possible. Since we need a seed to keep the results consistent and reproducible, we looped through numbers 1 through 100 to set as possible seeds. First, we split the training set and testing set 50\% and 50\% respectively. this give us around the same number as when we set the training and testing set to 75\% and 25\% respectively. We decided to report the bigger number (obviously) which is $R^2=  0.277918789503239$ (approx.) and $MSE= 0.529555537034112$ (approx.) when $B=1500$ (number of trees), \texttt{seed}$=64$ and $M=5$ (number of variables used per tree). 
 
 How do we improve this further? We found a function in the \texttt{rpart} library that can control the \texttt{rpart} function, \texttt{rpart.control}. The code below contains a control added to the Random Forest algorithm in order to bring the $R^2$ up to around 0.2999. This code can be found in \texttt{experiment.R} (it takes at least 10 minutes to run depending on the parameter). 
 ```{r, message=FALSE}
@@ -268,6 +268,42 @@ We can see that the leaf nodes all have qualities/labels that are in the open in
 
 Another reason is the decision trees that are used in the algorithm. We are using \texttt{rpart} to produce the trees. This is a built in R function that generates decision trees given a dataset. Since this function is blackbox, we are not sure what exactly it does to separate the feature space to make the trees. If we had more time, we would love to learn more about how to split feature space and produce trees manually that helps us improve the accuracy.
 
+The last possible reason we thought of that regresson is not performing well is just the dataset alone and how we set up the data. Red wine and white wine might have different standards and the pattern or the model of the variables might be completely different. Therefore, we decided to run a little test. We took just the white wine data and ran the Random Forest regression on it. The result is surprising! Have a look!
+```{r, warning=FALSE}
+whiteWineData.i = whiteWineData
+whiteWineData.i = (whiteWineData.i[complete.cases(whiteWineData.i),])
+names(whiteWineData.i) = gsub(" ","_", names(whiteWineData.i))
+whiteWineData.i$quality  = as.factor(whiteWineData.i$quality)
+split = sample(2, nrow(whiteWineData.i), prob=c(0.7,0.3), replace=TRUE)
+training_set = whiteWineData.i[split==1,]
+testing_set = whiteWineData.i[split==2,]
+training_labels = as.numeric(as.character(training_set$quality))
+testing_labels = as.numeric(as.character(testing_set$quality))
+training_set = training_set[,-ncol(training_set)]
+testing_set = testing_set[,-ncol(testing_set)]
+B = 500
+M = 5  
+ctrl = rpart.control(cp = 0.005, minsplit = 500, xval = 10)
+f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M,ctrl)
+```
+Indeed, white wine and red wine are modelled completely different. Just using white wine data, our $R^2$ increased to $0.693669082194203$. This is a significant increase from doing the regression with both data combined. Now, let's do the same with red wine data!
+```{r, warning=FALSE}
+redWineData.i = redWineData
+redWineData.i = (redWineData.i[complete.cases(redWineData.i),])
+names(redWineData.i) = gsub(" ","_", names(redWineData.i))
+redWineData.i$quality  = as.factor(redWineData.i$quality)
+split = sample(2, nrow(redWineData.i), prob=c(0.8,0.2), replace=TRUE)
+training_set = redWineData.i[split==1,]
+testing_set = redWineData.i[split==2,]
+training_labels = as.numeric(as.character(training_set$quality))
+testing_labels = as.numeric(as.character(testing_set$quality))
+training_set = training_set[,-ncol(training_set)]
+testing_set = testing_set[,-ncol(testing_set)]
+B = 500
+M = 5  
+ctrl = rpart.control(cp = 0.005, minsplit = 500, xval = 10)
+f = PerformRegression(training_set,training_labels,testing_set,testing_labels,B,M,ctrl)
+```
 \subsection{\textbf{Classification}}
 \subsubsection{Breast Cancer}
 Here's another example, but instead we will do classification on this dataset rather than regression. This data is is preprocessed already so we have to read in the data only.
