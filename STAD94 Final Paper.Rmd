@@ -14,6 +14,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+set.seed(1)
 ```
 
 \newpage
@@ -47,8 +48,31 @@ Bootstrapping in statistics is any test or metric that relies on random sampling
     \item Calculate $$\widehat{Var}_{\hat{F}}(\hat{\Psi})=\frac{1}{m-1}\left[\sum_{i=1}^m (\hat{\Psi}_i-\bar{\hat{\Psi}})^2\right]$$ where $\bar{\hat{\Psi}}=\frac{1}{m}\sum_{i=1}^m \hat{\Psi}_i$
   \end{enumerate}
 \end{theo}
-
-A very similar approach is used to create decision trees for Random Forest. The minor modification is that we sample the size of the dataset instead of choosing an arbitrary sample size.
+A sample implementation in R and an example is given below.
+```{r}
+data = c(1.06, -1.28, 0.4, 1.36, -0.35,
+         -1.42, 0.44, -0.58, -0.24, -1.34,
+         0.00, -1.02, -1.35, 2.05, 1.06,
+         0.98, 0.38, 2.13, -0.03, -1.29)
+n = length(data)
+M = c(10,10^2,10^3,10^4,10^5,10^6,15^5)
+var.psi.v = rep(NA, length(M))
+j=1
+for (m in M) {
+  samp.var = rep(NA, m)
+  for (i in 1:m) {
+    samp = sample(data, n, replace=TRUE)
+    samp.var[i] = ((n-1)*var(samp))/n
+  }
+  psi_bar = sum(samp.var)/m
+  var.psi = (sum((samp.var-psi_bar)^2))/(m-1)
+  var.psi.v[j] = var.psi
+  j = j+1
+}
+var.psi.v
+plot(M,var.psi.v,type="l")
+```
+As we can see in the above plot and the numbers, the numbers become more and more stable as we increase the number of bootstrap samples. A very similar approach is used to create decision trees for Random Forest. The minor modification is that we sample the size of the dataset instead of choosing an arbitrary sample size.
 
 \subsection{Random Forest}
 The procedure is as follows:
@@ -93,7 +117,7 @@ On the suggestion of our beloved professor, we began using \texttt{Rpart} to dec
 At this point, we created a github account and set up everything required to ahve an object oriented development session with shared statistical resourced. We used GitHub as a base and created multiple branches for each of us, with master being the one we would pull from and merge to when we were satisfied. We first began by creating a series of functions we thought would be useful. This included functions such as the library setter (found, installed if missing, and imported the libraries required for the scripts to work), a tree creator, and a script to set up the data set (only one at the time) to be workable. As it would turn out, we had issues with the trees, so we spent some time fixing our tree creation and happily spent time running and comparing our brand new creations. Needless to say we were proud that we had step 1 complete!
 We had managed to get basic trees to show up! little did we know they ended up being terrible at predicting, but we were enthraleld with the pretty colours and splits it had, so even if for the moment, we had been satisfied.
 
-From here on out, we started to work on other functions. We needed a way to actually create the forest. So, we first began by creating a function that took as input the number of boostraps, the number of features for each tree, and the data the trees would be based on. We took these inputs, and created as many bootstrap samples as the input specified, creating a tree using the previous function using this bootstrap as the data instead! So far so good. We had a way to iteratively create trees for each bootstrap sample. There was however a key problem tht had arrised: How do we store these trees? How do we retreive which observations were affected by the tree? Which ones could we test on? As it turns out, R doesn't allow us to create datatypes with the same efficiency as other platforms, so we had to improvise. Our solution was to create empty lists for everything and then append to them. Each tree return would now consist of the tree itself, the set of all observations in the original training data that the tree did NOT use to train (making cross validation ... valid on these sets) and the list of the variables that it has found to be the most important in prediction (out of the ones chosen for its features only.)
+From here on out, we started to work on other functions. We needed a way to actually create the forest. So, we first began by creating a function that took as input the number of boostraps, the number of features for each tree, and the data the trees would be based on. We took these inputs, and created as many bootstrap samples as the input specified, creating a tree using the previous function using this bootstrap as the data instead! So far so good. We had a way to iteratively create trees for each bootstrap sample. There was however a key problem that had arised: How do we store these trees? How do we retreive which observations were affected by the tree? Which ones could we test on? As it turns out, R doesn't allow us to create datatypes with the same efficiency as other platforms, so we had to improvise. Our solution was to create empty lists for everything and then append to them. Each tree return would now consist of the tree itself, the set of all observations in the original training data that the tree did NOT use to train (making cross validation ... valid on these sets) and the list of the variables that it has found to be the most important in prediction (out of the ones chosen for its features only.)
 
 These lists returned by the tree function would find themselves added to another list inside the forest function which stores all the trees returned for each bootstrap sample. This is then made additionally nested, since the tree itself is also a list! Each part of the tree (such as the splits, its important variables, the methods it has, function calls, etc) is also stored in a list or a series of nested lists. As you can imagine this results to objects of substantial order. One of the challenges of creating this script was tracking the location of things we needed in this large cluster of topography. Fortunately, we found a way to work with this chaos, and retreived all the things we needed.
 
@@ -121,7 +145,6 @@ library(dplyr)
 library(tidyverse)
 library(rpart)
 library(rpart.plot)
-set.seed(1)
 ```
 
 \subsection{\textbf{Regression}}
@@ -289,10 +312,7 @@ Note that this data is a binary classification (only 2 classes to classify betwe
  
 Now that we know previously that our implementation of Random Forests classified fairly well against data that has only two classes. Now we will see how our implementation of RandomForests fares against data that has 6 classes.
 
-Read data. The parameter names and the data itself is in two separate files;
-we need to first read in the data then set set the column names using the file 
-containing the parameter names. Keep one dependent variables to classify, remove 
-the other dependent variables.
+First things first, we got to read in the data! The parameter names and the data itself is in two separate files (we got a problem, Houston!); we need to first read in the data then set set the column names using the file containing the parameter names. Keep one dependent variables to classify, remove the other dependent variables.
 ```{r, include=FALSE}
 data_file <- "Faults.NNA"
 headers_file <- "Faults27x7_var.txt"
@@ -310,7 +330,8 @@ colnames(data) <- data_headers
 #6.Bumps 
 #7.Other_Faults
 # change the values of the other categories to correspond the number of the type of steel fault
-data=subset(data,select=-c(Other_Faults))
+
+data = subset(data,select=-c(Other_Faults))
 labels = subset(data, select=c("Pastry", "Z_Scratch", "K_Scatch", "Stains", "Dirtiness", "Bumps"))
 
 data <- (data[complete.cases(data),])
@@ -323,7 +344,7 @@ data = cbind(data,Fault_Type)
 data = within(data, Fault_Type <- factor(Fault_Type, labels = c(6,5,3,1,4,2)))
 ```
 
-Clean data and make column names string-friendly
+Delete any NA values in the dataset and make column names such that they contain no spaces (all spaces are replaced with underscores).
 ```{r, include=FALSE}
 #Purge rows containing N/A entries
 data <- (data[complete.cases(data),])
@@ -332,27 +353,30 @@ data <- (data[complete.cases(data),])
 names(data) = gsub(" ","_", names(data))
 ```
 
- Permutate data and Split data into training and testing sets with a 7:3 ratio and replacement
+Before we run Random Forest, lets split the dataset. Here, we use 70% for training set and 30% for testing set.
 ```{r, include=FALSE}
 # first permutate the data because the data needs to be random
-
-data<- data[sample(nrow(data)),]
 split = sample(2, nrow(data), prob=c(0.7,0.3), replace=TRUE)
 train_subset = data[split==1,]
 test_subset = data[split==2,]
 ```
 
-
+Splitting the labels and the data in roder to run Random Forest.
 ```{r, warning=FALSE}
-train_labels = as.factor(unlist(train_subset[ncol(train_subset)]))#training_set labels
-test_labels = as.factor(unlist(test_subset[ncol(test_subset)]))# testing_set Labels
-train_subset = train_subset[,-ncol(train_subset)] #getting rid of the labels to  prepare
+# Training set labels
+train_labels = as.factor(unlist(train_subset[ncol(train_subset)]))
+
+# Testing set labels
+test_labels = as.factor(unlist(test_subset[ncol(test_subset)]))
+train_subset = train_subset[,-ncol(train_subset)]
+
 # To perform classification
 test_subset = test_subset[,-ncol(test_subset)]
 num_vars = 5
 num_trees = 800
-#function(Df, labels, Df2, labels2, num_trees, num_vars, ctrl = "None")
-f = PerformClassification(train_subset,train_labels,test_subset,test_labels,num_trees,num_vars, ctrl = "None")
+
+f = PerformClassification(train_subset,train_labels,test_subset,test_labels,num_trees,
+                          num_vars, ctrl = "None")
 ```
 We obtained a accuracy of around 53.3%. This is significantly worse than the Breast Cancer data, which had only binary variables. There are more variables, more observations and more classes, so it should be more difficult to have as high of accuracy as the Breast Cancer Data. Like in the previous performs, we will try to add a control to try to increase the accuracy.
 
@@ -360,6 +384,7 @@ We obtained a accuracy of around 53.3%. This is significantly worse than the Bre
 We enjoyed working on this project a lot. Researching about bootstrapping, bagging and Random Forest algorithm is very interesting. 
 We came across hurdles while implementing the algorithm, issues concerning with runtime, complexity of the algorithm and alternatives for sections that we didn't have sufficient time to learn. 
 
+\subsection{Future Work}
 Of course, there's room for improvement. Using Random Forest to do regression, our $R^2$ was not as high as we wanted. The MSE was satisfactory as well, as a consequence to the $R^2$ being low. Also for classification, predictions are really bad. We suspect if we had can manually control the splitting of the feature space and how the decision trees are made. This can be done if we can implement \texttt{rpart}, this can be done if we port this project into Python, C or Java, any Object-Orientated Programming (OOP) language will be easier. C is preferred in this case, since it is possible to optimize in C.
 
 \section{Appendix}
