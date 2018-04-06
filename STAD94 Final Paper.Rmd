@@ -5,6 +5,8 @@ date: "April 4, 2018"
 document-class: report
 header-includes:
   - \usepackage{bbm}
+  - \usepackage{mdframed}
+  - \newmdtheoremenv{theo}{Algorithm}
 output:
   pdf_document: 
     number_sections: yes
@@ -21,15 +23,34 @@ knitr::opts_chunk$set(echo = TRUE)
 
 \section{Introduction}
 
-This project was aimed at building and using an algorithm that will create predictions for classification and regression problems by using the idea of "random forests." The algorithm heavily relies on the aspect of "randomness" to reduce bias, since it attempts to randomly select sample spaces AND feature spaces from the original data, and does it hundreds of times over. The goal is to then to train a series of models and gain inputs from each, contributing to a final result. The algorithm does best at predicting the regressive variant for quantitative predictions. 
+This project was aimed at building and using an algorithm that will create predictions for classification and regression problems by using the idea of "random forests." The algorithm heavily relies on the aspect of "randomness" to reduce bias, since it attempts to randomly select sample spaces AND feature spaces from the original data, and does it hundreds of times over. The goal is to then train a series of models and gain inputs from each, contributing to a final result. The algorithm does best at predicting the regressive variant for quantitative predictions. 
 
-A "random forest" is a collections of decision trees which each perform predictions, after which the forest will aggregate these or select a prediction which it will return. Each tree is trained over a bootstrapped sample of the   training set, with a randomly selected set of variables to create it's feature space. This means that each tree has high bias, however since the forest is intended for use with hundreds of trees, the bias in the overall forest drops significantly lower than other models for this result.
+A "random forest" is a collections of decision trees which each perform predictions, after which the forest will aggregate these or select a prediction which it will return. Each tree is trained over a bootstrapped sample of the training set, with a randomly selected set of variables to create its feature space. This means that each tree has high bias, however since the forest is intended for use with hundreds of trees, the bias in the overall forest drops significantly lower than other models as a result.
 
 
 Bootstrapping is the process by which we create a sample of the original data, which has the same size as the original data. This is made possible because the sampling is done with replacement. Therefore, the same observations can be used repeatedly, with a uniform distribution chance to be chosen.
 
 \section{Methodologies}
 
+Before we get into the algorithm for Random Forest, we need to go over some basic statistical methods.
+
+\subsection{Distribution Free Statistical Methods: Bootstrapping}
+Bootstrapping in statistics is any test or metric that relies on random sampling with replacement. This is commonly used to get the variance of a complicated distribution. But how is this implemented? The algorithm is as follows:
+\vspace{0.5cm}
+
+\begin{theo}
+  Let $\hat{\Psi}_i$, $i=1,2,\dots ,n$ be the bootstrap samples and $\widehat{F(x)}$ be an Empirical distribution. Suppose we want to estimate the variance. 
+  \begin{enumerate}
+    \item Draw a sample of size $n$ with replacement from $\widehat{F(x)}$
+    \item Calculate $\hat{\Psi}$ from the sample in (1)
+    \item Repeat steps (1) and (2) for $m$ times to get $\hat{\Psi}_1,\hat{\Psi}_2,\dots ,\hat{\Psi}_n$ such that $m<<n^n$
+    \item Calculate $$\widehat{Var}_{\hat{F}}(\hat{\Psi})=\frac{1}{m-1}\left[\sum_{i=1}^m (\hat{\Psi}_i-\bar{\hat{\Psi}})^2\right]$$ where $\bar{\hat{\Psi}}=\frac{1}{m}\sum_{i=1}^m \hat{\Psi}_i$
+  \end{enumerate}
+\end{theo}
+
+A very similar approach is used to create decision trees for Random Forest. The minor modification is that we sample the size of the dataset instead of choosing an arbitrary sample size.
+
+\subsection{Random Forest}
 The procedure is as follows:
 \begin{itemize}
   \item Select a number of trees for the forest, and how big the feature space is. 
@@ -72,21 +93,21 @@ On the suggestion of our beloved professor, we began using \texttt{Rpart} to dec
 At this point, we created a github account and set up everything required to ahve an object oriented development session with shared statistical resourced. We used GitHub as a base and created multiple branches for each of us, with master being the one we would pull from and merge to when we were satisfied. We first began by creating a series of functions we thought would be useful. This included functions such as the library setter (found, installed if missing, and imported the libraries required for the scripts to work), a tree creator, and a script to set up the data set (only one at the time) to be workable. As it would turn out, we had issues with the trees, so we spent some time fixing our tree creation and happily spent time running and comparing our brand new creations. Needless to say we were proud that we had step 1 complete!
 We had managed to get basic trees to show up! little did we know they ended up being terrible at predicting, but we were enthraleld with the pretty colours and splits it had, so even if for the moment, we had been satisfied.
 
-From here on out, we started to work on other functions. We needed a way to actually create the forest. So, we first began by creating a function that took as input the number of boostraps, the number of features for each tree, and the data the trees would be based on. We took these inputs, and created as many bootstrap samples as the input specified, creating a tree using the previous function using this bootstrap as the data instead! So far so good. We had a way to iteratively create trees for each bootstrap sample. There was however a key problem tht had arrised: How do we store these trees? How do we retreive which observations were affected by the tree? Which ones could we test on? As it turns out, R doesn't allow us to create datatypes with the same efficiency as other platforms, so we had to improvise. Our solution was to create empty lists for everything and then append to them. Each tree return would now consist of the tree itself, the set of all observations in the original training data that the tree did NOT use to train (making cross validation ... valid on these sets) and the list of the variables that it has found to be the most important in prediction (out of the ones chosen for it's features only.)
+From here on out, we started to work on other functions. We needed a way to actually create the forest. So, we first began by creating a function that took as input the number of boostraps, the number of features for each tree, and the data the trees would be based on. We took these inputs, and created as many bootstrap samples as the input specified, creating a tree using the previous function using this bootstrap as the data instead! So far so good. We had a way to iteratively create trees for each bootstrap sample. There was however a key problem tht had arrised: How do we store these trees? How do we retreive which observations were affected by the tree? Which ones could we test on? As it turns out, R doesn't allow us to create datatypes with the same efficiency as other platforms, so we had to improvise. Our solution was to create empty lists for everything and then append to them. Each tree return would now consist of the tree itself, the set of all observations in the original training data that the tree did NOT use to train (making cross validation ... valid on these sets) and the list of the variables that it has found to be the most important in prediction (out of the ones chosen for its features only.)
 
-These lists returned by the tree function would find themselves added to a nother list inside the forest function which stores all the trees returned for each bootstrap. This is then made additionally nested, since the tree itself is also a list! Each part of the tree (such as the plits, it's important variables, the methods it has, function calls, etc) is also stored in a list or a series of nested lists. As you can imagine this results to objects of substantial order. One of the challenges of creating this script was tracking the location of things we needed in this large cluster of topography. Fortunately, we found a way to work with this chaos, and retreived all the things we needed.
+These lists returned by the tree function would find themselves added to another list inside the forest function which stores all the trees returned for each bootstrap sample. This is then made additionally nested, since the tree itself is also a list! Each part of the tree (such as the splits, its important variables, the methods it has, function calls, etc) is also stored in a list or a series of nested lists. As you can imagine this results to objects of substantial order. One of the challenges of creating this script was tracking the location of things we needed in this large cluster of topography. Fortunately, we found a way to work with this chaos, and retreived all the things we needed.
 
 Now that we had working forests, we had to compare them. So began the largely arduous process of running large batches of forests and comparing these trees, needless to say the most difficult part of this process was simply waiting. The trees took time to compute and as a result so to did the forests, which contained many such sets of trees. Fortunately we managed to find a series of pros and cons, and thought fo a way to approach such issues. One interesting thing that came up was the number of splits in each tree. On average, we had less splits than other algorithms. This is an issue that is fixed later via the use of "controls."
 
 From here we had to come up with and create classification and regressive comparisons and ways to evaluate the performance of the random forest ont he test data.
 We created two functions, one for clasification and one for regression. These will create their respective models and then have them ready for assessment that corresopnds to the type of model.
-Under classification we have Loss function, which calculates false positives. For regression we calculate a MSE and a coefficient of determination using the formulas involving the error terms. This allows us to account for all possibile conditional distributions of the multivariable regressions, since we use only the final residual, which is the leftover from the total minus the sum of all regressive sum of squares.
+Under classification we have Loss function, which calculates false positives. For regression, we calculate a MSE and $R^2$ using the formulas involving the error terms. Specifically $$R^2=1-\frac{SSRes}{SSTot}=\frac{SSReg}{SSTot}$$ and $$MSE=\frac{1}{n}\sum_{i=1}^n (Y_i-\hat{Y}_i)^2$$ where $\hat{Y}$ is a vector of $n$ predictions and $Y$ is a vector of observed values. This allows us to account for all possible conditional distributions of the multivariable regressions, since we use only the final residual, which is the leftover from the total minus the sum of all regressive sum of squares.
 
 The process by which we worked out a working variant of the accuracy function was quite tedious. As it turned out each time someone would update it, someone else who hasn't yet pulled from the repository would commit the old version, effectively re-writing the previous work a few times.
-In addition we came to the realization that the formula for MSE and $R^2$ we were using relied on Regression. However, as we were working with multiple predictors, we had no choice but to re-do the function to use the error term instead fo regular regression. This is due tot he fact that with multiple predictors the MSE is unique to each of them, conditional on the rest. So, to get true error we have to use the error term which is residual from the final conditional subtracted from the total. As it turns out the math here is equivalent, however we have a value that is present for all datasets.
+In addition we came to the realization that the formula for MSE and $R^2$ we were using relied on Regression. However, as we were working with multiple predictors, we had no choice but to re-do the function to use the error term instead fo regular regression. This is due to the fact that with multiple predictors the MSE is unique to each of them, conditional on the rest. So, to get true error we have to use the error term which is residual from the final conditional subtracted from the total. As it turns out the math here is equivalent, however we have a value that is present for all datasets.
 
-Prior to the use of controls we had trouble creating splitting or using cross validation. We tried to fix this with excessive numbers of trees and various variables selected. None of these meathods would serve our purposes, and we were despondant for a better option.
-Finally we implemented the control mechanic. We can now control the number of splits, the number of cross validations for each tree, the minimum increase of $R^2$ per split, etc. This function also increased our own values by a significant amount. The issue is that majority of these are hyper-parameters that we have to come up with outselves.
+Prior to the use of controls we had trouble creating splitting or using cross validation. We tried to fix this with excessive numbers of trees and various variables selected. None of these methods would serve our purposes, and we were despondant for a better option.
+Finally, we implemented the control mechanic. We can now control the number of splits, the number of cross validations for each tree, the minimum increase of $R^2$ per split, etc. This function also increased our own values by a significant amount. The issue is that majority of these are hyperparameters that we have to come up with ourselves.
 
 
 
@@ -212,9 +233,7 @@ table(testing_labels)
 
 The histogram above depicts the frequency of quality ratings of wine to be normally distributed, peaking at 6. We can also observe that quality 5 is also very popular amongst all estimated qualities using Random Forest. The less frequently estimated qualities, 1,2,3,4,7,8, and 9, are less popular due to the qualities appearing less in the training set and in the whole data file, in general. Taking a look at the mean and variance of the distribution, we get: 
 ```{r}
-print("mean: ")
 mean(data)
-print("variance: ")
 (sd(data))^2
 ```
 
@@ -237,36 +256,38 @@ BreastCancer$Class = (BreastCancer$Class) +1
 BreastCancer$Class = as.factor(BreastCancer$Class)
 BreastCancer = BreastCancer[-1]
 ```
-Now that we have the data we can then perform Classification on it and see how it fares.
+Now that we have the data we can then perform Classification on it and see how it fares. Here, we will 80% of the data for the training set and 20% of the data for the testing set.
 
 ```{r BC perform, warning=FALSE}
 set.seed(41)
 split = sample(2, nrow(BreastCancer), prob=c(0.8,0.2), replace=TRUE)
 training_set2 = BreastCancer[split==1,]
 testing_set2 = BreastCancer[split==2,]
+
 # Training set labels
 labelsBC = as.factor(unlist(training_set2[ncol(training_set2)]))
+
 # Testing set labels
 labelsBC2 = as.factor(unlist(testing_set2[ncol(testing_set2)]))
+
 # Getting rid of the labels to prepare for classification using Random Forest
 training_set2 = training_set2[,-ncol(training_set2)] 
 testing_set2 = testing_set2[,-ncol(testing_set2)]
 B2 = 500
 M2 = 3
 
-ctrl = rpart.control(cp = 0.004, minsplit = 500, xval = 10)
+ctrl = rpart.control(cp = 0.005, minsplit = 500, xval = 10)
 f = PerformClassification(training_set2,labelsBC,testing_set2,labelsBC2,B2,M2,ctrl)
 ```
 
+Result was obtained by setting \texttt{seed}$=41$, $B=500$ and $M=3$. The loss we got for classifcation on the recommended number of variables is about 0.9787, so approximately 97.87% accuracy. This is quite good. Based on what we have read about classification with Random Forest, if the data is simple the accuracy will be quite high and due to the effect of having to do a combination of $m$ of the $p$ variables in the data, it reduces the possibility to overfit. So with that in mind, we can be quite certain that our accuracy we obtained makes sense.
 
-The loss we got for classifcation on the recommended number of variables is about 0.9787, so approximately 97.87% accuracy. This is quite good. Based on what we have read about classification with random forests, if the data is simple the accuracy will be quite high and due to the effect of having to do a combination of m of the p variables in the data, it reduces the possibility to overfit. So with that in mind, we can be quite certain that our accuracy we obtained makes sense.
+Note that this data is a binary classification (only 2 classes to classify between). This is a good test data set to test the classification algorithm if it works. THe datasset is not complicated and it is a simple 'Yes' or 'No' for each observation. Obtaining a good result for this dataset gave us confidence that it will work on datasets with more classes. The next dataset, Steel Data has 7 classes and more observations than Breast Cancer. Read on!
 
 
 \subsubsection{Steel Data}
  
 Now that we know previously that our implementation of Random Forests classified fairly well against data that has only two classes. Now we will see how our implementation of RandomForests fares against data that has 6 classes.
-
-
 
 Read data. The parameter names and the data itself is in two separate files;
 we need to first read in the data then set set the column names using the file 
