@@ -26,9 +26,9 @@ set.seed(1)
 
 This project aims at the construction and implementation of the "Random Forest" algorithm, which generates predictions for problems in classification and regression. Relying on randomness, the algorithm selects both sample and feature spaces hundreds of times from the original dataset. The result is a prediction with minimal bias due to the lack of overfitting.
 
-The term 'random forest' is derived from the collection of decision trees in which the algorithm uses. Each tree is trained over a bootstrapped sample of the training set with a randomly selected set of variables to create its feature space. This means that each tree has high bias; however, the overall bias of the prediction drops significantly since the forest is intended for use with hundreds of trees. As a result, the algorithm is able to derive a very accurate prediction through aggregating all of the decisions returned by each tree.
+The term 'random forest' is derived from the collection of decision trees in which the algorithm uses. Each tree is trained over a bootstrapped* sample of the training set with a randomly selected set of variables to create its feature space. This means that each tree has high bias; however, the overall bias of the prediction drops significantly since the forest is intended for use with hundreds of trees. As a result, the algorithm is able to derive a very accurate prediction through aggregating all of the decisions returned by each tree.
 
-Bootstrapping is the process by which we create a sample of the original data, which has the same size as the original data. This is made possible because the sampling is done with replacement. Therefore, the same observations can be used repeatedly, with a uniform distribution chance to be chosen.
+*Bootstrapping is a sampling method where a random sample of the same size as the sample space is taken with replacement from the sample space.
 
 \section{Methodologies}
 
