@@ -141,7 +141,7 @@ Regress = function(forest,obs){
 }
 
 "
-A function that calculates accuracy for regresison functions
+A function that calculates accuracy for regression functions
 "
 Accuracy = function(predicts, labels){
   tot  = sum((predicts - labels)^2)
