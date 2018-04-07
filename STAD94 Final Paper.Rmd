@@ -1,5 +1,5 @@
 ---
-title: "A Look Into The Random Forest Algorithm And It's Applications"
+title: "A Look into the Random Forest Algorithm and its Applications"
 author: "Daerian Dilkumar, Guan Yu Chen, Derek Frempong, Zong Li"
 date: "April 4, 2018"
 document-class: report
@@ -25,18 +25,15 @@ set.seed(1)
 
 \section{Introduction}
 
-This project was aimed at building and using an algorithm that will create predictions for classification and regression problems by using the idea of "random forests." The algorithm heavily relies on the aspect of "randomness" to reduce bias, since it attempts to randomly select sample spaces AND feature spaces from the original data, and does it hundreds of times over. The goal is to then train a series of models and gain inputs from each, contributing to a final result. The algorithm does best at predicting the regressive variant for quantitative predictions. 
+This project aims at the construction and implementation of the "Random Forest" algorithm, which generates predictions for problems in classification and regression. Relying on randomness, the algorithm selects both sample and feature spaces hundreds of times from the original dataset. The result is a prediction with minimal bias due to the lack of overfitting.
 
-A "random forest" is a collections of decision trees which each perform predictions, after which the forest will aggregate these or select a prediction which it will return. Each tree is trained over a bootstrapped sample of the training set, with a randomly selected set of variables to create its feature space. This means that each tree has high bias, however since the forest is intended for use with hundreds of trees, the bias in the overall forest drops significantly lower than other models as a result.
-
-
-Bootstrapping is the process by which we create a sample of the original data, which has the same size as the original data. This is made possible because the sampling is done with replacement. Therefore, the same observations can be used repeatedly, with a uniform distribution chance to be chosen.
+The term 'random forest' is derived from the collection of decision trees in which the algorithm uses. Each tree is trained over a bootstrapped \textsuperscript{[\ref{bootstrap}]} sample of the training set with a randomly selected set of variables to create its feature space. This means that each tree has high bias; however, the overall bias of the prediction drops significantly since the forest is intended for use with hundreds of trees. As a result, the algorithm is able to derive a very accurate prediction through aggregating all of the decisions returned by each tree.
 
 \section{Methodologies}
 
 Before we get into the algorithm for Random Forest, we need to go over some basic statistical methods.
 
-\subsection{Distribution Free Statistical Methods: Bootstrapping}
+\subsection{Distribution Free Statistical Methods: Bootstrapping}\label{bootstrap}
 Bootstrapping in statistics is any test or metric that relies on random sampling with replacement. This is commonly used to get the variance of a complicated distribution. But how is this implemented? The algorithm is as follows:
 \vspace{0.5cm}
 
@@ -77,14 +74,14 @@ As we can see in the above plot and the numbers, the numbers become more and mor
 
 \subsection{Random Forest}
 The procedure is as follows:
-\begin{itemize}
+\begin{enumerate}
   \item Select a number of trees for the forest, and how big the feature space is. 
   \item For each tree, choose variables from the feature space, and get a bootstrap. 
   \item Train the model for each tree with these variables for the given labels. 
   \item Collect the trees into a forest to get them ready for predictions 
   \item Finally, given testing data, use the forest to create as many predictions are there are trees.
   \item Aggregate the predictions for a final prediction for each observation in the testing data.
-\end{itemize}  
+\end{enumerate}  
 
 The libraries we used are as follows: 
 \begin{itemize}
@@ -97,9 +94,9 @@ The libraries we used are as follows:
 \section{Development Process}
 During May of 2017, Daerian and Derek attended the DataFest competition where several of the winning teams implemented a variant of the Random Forest algorithm in their analysis. Inspired by the top participants at DataFest, we have decided to delve deeper into the heart of the Random Forest algorithm, ultimately implementing the algorithm in R and putting it through rigorous testing on various classification and regression datasets.
 
-"Elements of Statistical Learning" and "Introduction of Statistical learning with Applications in R" (Gareth, n.d.) greatly aided us in the development of the algorithm. We started with little prior knowledge of Random Forest, we tasked ourselves to learn about the statistical methods and algorithms before exploring the implementations of the Random Forest algorithm. We discovered that Random Forest uses an amalgamation of bootstrapped decision trees that sample (without replacement) the predictors to reduce bias and increase variance.
+"Elements of Statistical Learning"  (Hastie, n.d.) and "Introduction of Statistical learning with Applications in R" (Gareth, n.d.) greatly aided us in the development of the algorithm. We started with little prior knowledge of Random Forest, we tasked ourselves to learn about the statistical methods and algorithms before exploring the implementations of the Random Forest algorithm. We discovered that Random Forest uses an amalgamation of bootstrapped decision trees that sample (without replacement) the predictors to reduce bias and increase variance.
 
-First, we have applied a function that generated a sample tree, using bootstrapping, with sampled predictors that $m\leq p$ where $p$ are the number of predictors. We then created a fuction that loops and creates $B$ amount of trees, creating a "Random Forest". We then put the $B$ trees into a nested list, where the $i$th element is a list with three elements; One being the $i$th bootstrapped tree, second being the anti join of the data, and the final element being the sample used to generate the the boopstrapped tree. Antijoins become useful when classifying as we implement "out of bag sampling" - when predicting each point, we need to aggregate the trees that did not contain the observation we are predicting as to stay accurate. We had to revise our algorithm numerous times due to impossibly high and near-zero accuracy results. We are currently experimenting with controls as a way to increase accuracy.
+First, we have applied a function that generated a sample tree, using bootstrapping, with sampled predictors that $m\leq p$ where $p$ are the number of predictors. \textsuperscript{[\ref{GenDecTree}]} We then created a function that loops and creates $B$ amount of trees, creating a "Random Forest". \textsuperscript{[\ref{getrf}]} We then put the $B$ trees into a nested list, where the $i$th element is a list with three elements; One being the $i$th bootstrapped tree, second being the anti join of the data, and the final element being the sample used to generate the the boopstrapped tree. Antijoins become useful when classifying as we implement "out of bag sampling" - when predicting each point, we need to aggregate the trees that did not contain the observation we are predicting as to stay accurate. We had to revise our algorithm numerous times due to impossibly high and near-zero accuracy results. We are currently experimenting with controls as a way to increase accuracy.
 
 \section{Our Story}
 
@@ -108,16 +105,16 @@ Our tale is one of fights, frustration and victory.
 We start our progress by attempting to research the topic of random forests, being as thorough as possible.
 Being the first time hearing of boostrapping and bagging, it tooks us a few weeks to understand the material. We held multiple late-night research sessions and had many arguments.
 
-Through plentiful office hour sessions, thorough examinations of papers in the library, meetings, and arguments razing the ears of the many students in the halls of BV, we have finally developed a game plan. We wrote our general ideas and shared them. Meanwhile, we had our team test each others' code. During this research process, we stumbled upon the concepts of cross entropy and confusion matrices, which quickly became an important concept to be later implemented. We strived to understand the intricacies involved in such notions.
+Through plentiful office hour sessions, thorough examinations of papers in the library, meetings, and arguments razing the ears of the many students in the halls of BV, we have finally developed a game plan. We wrote our general ideas and shared them. Meanwhile, we had our team test each others' sample code. During this research process, we stumbled upon the concepts of cross entropy and confusion matrices, which quickly became an important concept to be later implemented. We strived to understand the intricacies involved in such notions, as they will be come esssential to test the accuracy of the Random Forest algorithm.
 
-Upon our understanding of the new material, we have finally obtained some confidence to begin the implementation of our Random Forest algorithm. We have decided to consult with our supervising Professor, Dr. Ken Butler, for assistance in attaining access to increased processing power. With luck on our side, we were granted access to a portion of our institution's server processing power, CMS-Chorus: a virtual machine server hosted by the University of Toronto, with 6 CPUs at 3.6 gHz and 64 gigabytes of RAM.
+Upon our understanding of the new material, we have finally obtained some confidence to begin the implementation of our Random Forest algorithm. We have decided to consult with our supervising professor, Dr. Ken Butler, for assistance in attaining access to increased processing power. With luck on our side, we were granted access to a portion of our institution's server processing power, \texttt{cms-chorus}: a virtual machine server hosted by the University of Toronto, with 6 CPUs at 3.6 gHz and 64 gigabytes of RAM (better to have it and not need it rather than need it and not have it).
 
 Abiding by our Professor's advice, we began experimenting with \texttt{Rpart} which calculated the splits for our trees. \texttt{Rpart} is a package in R which plays a crucial role in creating decision trees via method of splitting the feature space, in our algorithm. During our experimentation, we have discovered that \texttt{Rpart} is mostly a black-box library. Feature selection, bootstrapping, and model setting for each tree were left for us to explore due to the black-boxing. The algorithms which we have implemented for these components worked for the time-being; however, we quickly found in our attempts, that we were required to constantly switch the type of splitting done and how the variables were handled. In fact, we were so confused that we wound up spending two weeks working on it. In the end, we simply had to leave a single variable out, which improved our result. This is suboptimal, however; we would like to proceed in updating the scripts to be able to take the type of splitting as a parameter from the user and update before packing the scripts for deployment on GitHub.
 
-At this point, we created a github account and set up everything required to have an object oriented development environment with shared statistical resources. We created multiple branches for each team member, with the master branch containing an amalgamation of all our finalized work. We first began by creating a series of functions we thought would be useful. This included functions such as the library setter (which would automatically scout for and install all required libraries), a tree creator, and a script to clean up the data set (only one at the time) to be in a compatible format. As we were testing our algorithm, we ran into various problems with tree generation, so some time was spent diagnosing and repairing our algorithm to generate trees. After our repairs were completed, we ran and compared our brand new creations. Needless to say we were proud that we had achieved this step.
+At this point, we created a GitHub account and set up everything required to have an object-oriented development environment with shared statistical resources. We created multiple branches for each team member, with the master branch containing an amalgamation of all our finalized work. We first began by creating a series of functions we thought would be useful. This included functions such as the library setter (which would automatically scout for and install all required libraries), a tree creator \textsuperscript{[\ref{GenDecTree}]}, and a script to clean up the data set (only one at the time) to be in a compatible format. As we were testing our algorithm, we ran into various problems with tree generation, so some time was spent diagnosing and repairing our algorithm to generate trees. After our repairs were completed, we ran and compared our brand new creations. Needless to say we were proud that we had achieved this step.
 Although very primitive, we had managed to generate trees! As logic goes, they were very poor at generating an optimal, nonetheless a feasible tree. With imperfections aside, we were pleased to have our algorithm running without error.
 
-We began production on other functions after our small success. We were generating trees, but were missing a process to organize them into a forest. To begin this process, we created a function which took the number of boostraps, the number of features for each tree, and the data the trees would be based on as input. We took these parameters and generated a number of bootstrap samples as specified by the input, and creating a tree using the previous function. As the algorithm progressed, some key problems had arised: How do we store these trees? How do we retrieve which observations were affected by the tree? How can we test its efficiency? As it turns out, R does not allow us to create datatypes with the same efficiency as other programming languages, so we had to improvise. Our solution was to create empty lists for everything and then append to them. Our function which generated the trees now consists of: the tree itself, the set of all observations in the original training data, and a list of variables which appeared the most frequently in the tree. These lists returned by the function would then be stored as nested lists, which represents the generated tree. Each part of the tree (such as the splits, its important variables, the methods it has, function calls, etc) is also stored in a similar fashion. As you can imagine, this results in objects of substantial order. One of the challenges of creating this script was tracking the location of resources we needed in this large cluster of topographies. Fortunately, we have discovered a work-around to this chaos, and retreived all the things we needed.
+We began production on other functions after our small success. We were generating trees, but were missing a process to organize them into a forest. To begin this process, we created a function which took the number of boostraps, the number of features for each tree, and the data the trees would be based on as input. We took these parameters and generated a number of bootstrap samples as specified by the input, and creating a tree using the previous function. As the algorithm progressed, some key problems had arised: How do we store these trees? How do we retrieve which observations were affected by the tree? How can we test its efficiency? As it turns out, R does not allow us to create datatypes with the same efficiency as other programming languages, so we had to improvise. Our solution was to create empty lists for everything and then append to them. Our function which generated the trees now consists of: the tree itself, the set of all observations in the original training data, and a list of variables which appeared the most frequently in the tree. These lists returned by the function would then be stored as nested lists, which represents the generated tree. Each part of the tree (such as the splits, its important variables, the methods it has, function calls, etc) is also stored in a similar fashion. \textsuperscript{[\ref{GenDecTree}][\ref{getrf}]} As you can imagine, this results in objects of substantial order. One of the challenges of creating this script was tracking the location of resources we needed in this large cluster of topographies. Fortunately, we have discovered a work-around to this chaos, and retreived all the things we needed.
 
 Now that we are generating working forests, we needed to compare them. We started the process of running large batches of forests and comparing their respective trees; needless to say, the most difficult part of this process was simply waiting. The trees took time to compute and as consequence, so to did the forests. As a result of this process, we achieved what we set out to find - the results of the comparisons. We have observed many interesting points from these results. One point worth mentioning was the number of splits in each tree. On average, we had less splits than other algorithms publicly available on CRAN. This is an issue which would later be resolved via the use of "controls."
 
@@ -125,11 +122,29 @@ From here we had to create comparisons in classification and regression datasets
 
 Computing the accuracy of the Random Forest algorithm was challenging. We came to the realization that the formula for MSE and $R^2$ we were using relied on regression. However, as we were working with multiple predictors, we had no choice but to re-do the function to use the error term instead of regular regression. This is due to the fact that with multiple predictors the MSE is unique to each of them. In order to get true error we have to use the error term which is the squared error of the fitted subtracted from the observed.
 
-Before implementing the control mechanic, there was no way of controlling how \texttt{rpart} splits the feature space to construct the decision trees. Since there was no control mechanic, the only hyperparameters available were number of trees used in the Random Forest algorithm, and number of variables used per tree. This was a major setback since these hyperparameters were insufficient to produce feasible results. The control mechanic can control the increase of $R^2$ per split of the feature space, number of cross validations used for each decision tree, minimum number of splits of the feature space, and many other hyperparameters used to construct a decision tree. Hyperparameters are parameters that are unknown and should be estimated under different circumstances. Experimenting with the hyperparameters in the control mechanic, the results improved significantly. Unfortunately, hyperparameters related to constructing decision trees were near impossible to get 100% accurate, this caused the classification and regression results to be not optimal. 
+Before implementing the control mechanic, there was no way of controlling how \texttt{rpart} splits the feature space to construct the decision trees. Since there was no control mechanic, the only hyperparameters available were number of trees used in the Random Forest algorithm, and number of variables used per tree. This was a major setback since these hyperparameters were insufficient to produce feasible results. The control mechanic can control the increase of $R^2$ per split of the feature space, number of cross validations used for each decision tree, minimum number of splits of the feature space, and many other hyperparameters used to construct a decision tree. Hyperparameters are parameters that are unknown and should be estimated under different circumstances. Experimenting with the hyperparameters in the control mechanic, the results improved significantly. Unfortunately, hyperparameters related to constructing decision trees were near impossible to get 100% accurate, this caused the classification and regression results to be not optimal. This was somwhat solved by "simulation".
+
+Not having optimal results because of inaccurate hyperparameters is something we can deal with, but we still wanted to see the most optimal results. This process turned to be very fustrating as it could take hours to run 1 simulation. The simulation would proceed as follows
+\vspace{0.5cm}
+
+\begin{theo}
+  \begin{enumerate}
+    \item Read, clean and format the data to be analyzed by the Random Forest algorithm
+    \item Set variables to be optimized to a initial value (0 works most of the time)
+    \item Loop through possible seeds for the Random Forest algorithm ($[0,100]$ were used)
+    \item For each seed, loop through all feasible values of hyperparameters
+    \item For each value of hyperparameters, record the value according to 2 cases:
+    \begin{enumerate}
+      \item \textbf{Regression}: Let $r_1$ be the previous $R^2$ recorded and let $r_2$ be the new $R^2$. $r_2$ will only be recorded if $r_2>r_1$.
+      \item \textbf{Classification}: Let $c_1$ be the previous accuracy recorded and let $c_2$ be the new accuracy. $c_2$ will only be recorded if $c_2>c_1$. \textsc{Note}: Accuracy is defined as $1-l$, where $l$ is the loss.
+    \end{enumerate}
+  \end{enumerate}
+\end{theo}
+This algorithm was used in a few of the results shown below. Due to time constraint, not all of the results came from this simulation algorithm. If time allowed, this algorithm possibly would be more efficient and we would be able to get more optimal results for each case.
 
 \section{Examples And Results}
 
-\textsc{Note:} We will be working with our functions and algorithms, which are stored in the file \texttt{RandomForest.R} so we will be first setting this source before we proceed.
+\textsc{Note:} We will be working with our functions and algorithms, which are stored in the file \texttt{randomforest.R}, so we will be first setting this source before we proceed.
 
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 source("randomforest.R")
@@ -404,23 +419,23 @@ train_subset = train_subset[,-ncol(train_subset)]
 test_subset = test_subset[,-ncol(test_subset)]
 num_vars = 5
 num_trees = 800
-ctrl = rpart.control(cp = 0.005, minsplit = 500, xval = 10)
+ctrl = rpart.control(cp = 0.004, minsplit = 500, xval = 10)
 f = PerformClassification(train_subset,train_labels,test_subset,test_labels,num_trees,
                           num_vars, ctrl)
 ```
-We obtained an accuracy of around 53.3%. This is significantly worse than the Breast Cancer data, which had only binary variables. There are more variables, more observations and more classes, so it should be more difficult to have as high of accuracy as the Breast Cancer Data. Like in the previous performs, we will try to add a control to try to increase the accuracy.
+We obtained an accuracy of around 50%. This is significantly worse than the Breast Cancer data, which had only binary variables. There are more variables, more observations and more classes, so it should be more difficult to have as high of accuracy as the Breast Cancer Data. Like in the previous performs, we will try to add a control to try to increase the accuracy.
 
 \section{Wrap-Up}
 We enjoyed working on this project a lot. Researching about bootstrapping, bagging and Random Forest algorithm is very interesting. 
 We came across hurdles while implementing the algorithm, issues concerning with runtime, complexity of the algorithm and alternatives for sections that we didn't have sufficient time to learn. 
 
 \subsection{Future Work}
-Of course, there's room for improvement. Using Random Forest to do regression, our $R^2$ was not as high as we wanted. The MSE was satisfactory as well, as a consequence to the $R^2$ being low. Also for classification, predictions are really bad. We suspect if we had can manually control the splitting of the feature space and how the decision trees are made. This can be done if we can implement \texttt{rpart}, this can be done if we port this project into Python, C or Java, any Object-Orientated Programming (OOP) language will be easier. C is preferred in this case, since it is possible to optimize in C.
+Of course, there's room for improvement. Using Random Forest to do regression, our $R^2$ was not as high as we wanted. The MSE was satisfactory as well, as a consequence to the $R^2$ being low. For classification, as the number of classes increased the accuracy dropped respectively. If time allowed, both of these can be solved by delving deeper into how to split the feature space manually and taking full control of how every tree in the Random Forest algorithm is constructed. Doing this will replace the use of \texttt{Rpart}, a blackbox throughout the entire project that was very difficult to grasp how to control it. Replacing \texttt{Rpart} with our own algorithm also requires that all decision trees are built manually. Since R is not made for object-oriented programming, this will be easier to implement in a object-orientated language such as Python or C. C is preferred as R is built in C and C is low level language which makes it easier to optimize algorithms. This can be very big next step in improving this Random Forest algorithm.
 
 \section{Appendix}
 \textsc{Note:} The following libraries are used throughout the code: \texttt{tidyverse}, \texttt{dplyr}, \texttt{rpart}, and \texttt{rpart.plot}.
 \subsection{Random Forest Snippets}
-\subsubsection{\texttt{BT\_Tree}: Generate Decision Trees}\label{GenDecTrees}
+\subsubsection{\texttt{BT\_Tree}: Generate Decision Trees}\label{GenDecTree}
 ```{r}
 BT_Tree = function(dat, labels, p, tree.print = "None", ctrl = "None") {
   # Set up Data to use
@@ -447,7 +462,10 @@ BT_Tree = function(dat, labels, p, tree.print = "None", ctrl = "None") {
   ret[[3]] = trees[["variable.importance"]]
   return(ret)
 }
+```
 
+\subsubsection{\texttt{Get\_Forest}: Generate the Random Forest}\label{getrf}
+```{r}
 Get_Forest = function(dat, labels, B, p, print.tree = "None", ctrl = "None"){
   forest = list()
   for (i in 1:B) {
