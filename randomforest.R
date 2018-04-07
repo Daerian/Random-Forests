@@ -114,6 +114,7 @@ Classify = function(forest, obs){
   ag_labels = apply(pred_labels.matrix, 1, function(x) as.numeric(as.character(names(which.max(table(x))))))
   return(ag_labels)
 }
+
 Loss = function(predicts, labels){
   loss =  as.numeric(predicts == labels)
   error = sum(loss) / length(labels)
