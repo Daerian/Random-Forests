@@ -102,8 +102,9 @@ First, we have applied a function that generated a sample tree, using bootstrapp
 
 \section{Our Story}
 
-Our tale is one of fights, frustration and victory ... sort of!
-We started by first trying to thoroughly research the topic of random forests.
+Our tale is one of fights, frustration and victory.
+
+We start our progress by attempting to research the topic of random forests, being as thorough as possible.
 Being the first time hearing of boostrapping and bagging, it tooks us a few weeks to understand the material. We held multiple late-night research sessions and had many arguments.
 
 Through plentiful office hour sessions, thorough examinations of papers in the library, meetings, and arguments razing the ears of the many students in the halls of BV, we have finally developed a game plan. We wrote our general ideas and shared them. Meanwhile, we had our team test each others' code. During this research process, we stumbled upon the concepts of cross entropy and confusion matrices, which quickly became an important concept to be later implemented. We strived to understand the intricacies involved in such notions.
