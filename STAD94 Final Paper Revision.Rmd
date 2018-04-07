@@ -71,7 +71,7 @@ for (m in M) {
 var.psi.v
 plot(M,var.psi.v,type="l")
 ```
-As we can see in the above plot and the numbers, the numbers become more and more stable as we increase the number of bootstrap samples. A very similar approach is used to create decision trees for Random Forest. The minor modification is that we sample the size of the dataset instead of choosing an arbitrary sample size.
+As we can see in the above plot and the numbers, the numbers stabilize as we increase the number of bootstrap samples. A very similar approach is used to create decision trees for Random Forest. The minor difference is the change of sample size; we pick a sample of the same size as the sample space instead of choosing an arbitrary sample size.
 
 \subsection{Random Forest}
 The procedure is as follows:
@@ -93,7 +93,7 @@ The libraries we used are as follows:
 \end{itemize}
 
 \section{Development Process}
-Let us begin with why our team decided to go with Random Forest. Daerian and Derek went to a DataFest around May 2017 and several of the winning teams used Random Forest in their analysis of the data they were working on. So inspired by the students at the DataFest, we decided to learn about Random Forest, and ultimately implement the algorithm in R on various datasets and see how it fares.
+During May of 2017, Daerian and Derek attended the DataFest competition where several of the winning teams implemented a variant of the Random Forest algorithm in their analysis. Inspired by the top participants at DataFest, we have decided to delve deeper into the heart of the Random Forest algorithm, ultimately implementing the algorithm in R and putting it through rigorous testing on various classification and regression datasets.
 
 We mainly used the "Elements of Statistical Learning" and "Introduction of Statistical learning with Applications in R" (Gareth, n.d.). Before we even got into Random Forest, we needed to learn about the statistical methods and algorithms used to implement a Random Forest. We found out that Random Forest use an amalgamation of bootstrapped decision trees that sample (without replacement) the predictors to reduce bias and increase variance.
 
